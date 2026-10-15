@@ -18,3 +18,7 @@ For UI, copy, people, mobile layout, or code comments work, read `antislop.md` (
 - Code comments: `skills/antislop-code/SKILL.md`
 Before starting, ask the user when antislop applies: during the work, or after it is done.
 <!-- antislop:end -->
+
+## Taste Skill (design-taste-frontend)
+For frontend design direction, layout craft, and anti-slop guidelines, read:
+- `.agents/skills/design-taste-frontend/SKILL.md`
