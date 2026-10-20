@@ -3,11 +3,12 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 
-// Data types
+// Types
 type ServiceCategory = "semua" | "web" | "app" | "enterprise";
 
 interface ServiceItem {
   id: string;
+  num: string;
   title: string;
   category: ServiceCategory;
   shortDesc: string;
@@ -17,12 +18,15 @@ interface ServiceItem {
 }
 
 export default function Home() {
-  // Client state
+  // Navigation & UI state
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<ServiceCategory>("semua");
-  const [selectedPackage, setSelectedPackage] = useState<string>("Pro");
-  
-  // Interactive consultation form state
+  const [scrolled, setScrolled] = useState(false);
+  const [activeServiceTab, setActiveServiceTab] = useState<ServiceCategory>("semua");
+  const [activeHeroTab, setActiveHeroTab] = useState<number>(0);
+  const [expandedFaq, setExpandedFaq] = useState<number | null>(0);
+  const [copiedAddress, setCopiedAddress] = useState(false);
+
+  // Consultation form state
   const [formData, setFormData] = useState({
     name: "",
     company: "",
@@ -30,9 +34,18 @@ export default function Home() {
     packageChoice: "Paket Pro (Rp 2.600.000)",
     message: "",
   });
-  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [formSent, setFormSent] = useState(false);
 
-  // Close mobile menu on Escape key
+  // Track window scroll for navbar styling
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Keyboard accessibility
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -43,102 +56,138 @@ export default function Home() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Services data (8 services requested)
+  // Copy address utility
+  const handleCopyAddress = () => {
+    navigator.clipboard.writeText(
+      "Jl. Sidosermo Gg. Damri No.39, Sidosermo, Kec. Wonocolo, Surabaya, Jawa Timur 60239"
+    );
+    setCopiedAddress(true);
+    setTimeout(() => setCopiedAddress(false), 2500);
+  };
+
+  // Form submit to WhatsApp
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const encoded = encodeURIComponent(
+      `Halo Koneksa Indonesia!\n\n` +
+      `Nama: ${formData.name}\n` +
+      `Perusahaan / Usaha: ${formData.company || "-"}\n` +
+      `Layanan: ${formData.service}\n` +
+      `Pilihan Paket: ${formData.packageChoice}\n` +
+      `Kebutuhan Proyek: ${formData.message}\n\n` +
+      `Mohon informasi lebih lanjut dan jadwal konsultasi. Terima kasih!`
+    );
+    window.open(`https://wa.me/6288217139228?text=${encoded}`, "_blank");
+    setFormSent(true);
+  };
+
+  // 8 Official Services
   const services: ServiceItem[] = [
     {
       id: "web-dev",
+      num: "01",
       title: "Website Development",
       category: "web",
-      shortDesc: "Pembangunan situs web kustom dengan performa tinggi, struktur SEO optimal, dan kompatibilitas multi-perangkat.",
-      features: ["Next.js & React", "Optimasi Core Web Vitals", "Integrasi Database & API"],
-      deliverable: "Source code lengkap, setup hosting, dan panduan teknis",
+      shortDesc: "Pembangunan website kustom berkecepatan tinggi, ramah SEO, dan didesain khusus sesuai citra bisnis profesional.",
+      features: ["Next.js & React Modern", "Optimasi Core Web Vitals", "Integrasi Database & API"],
+      deliverable: "Source code lengkap, setup cloud hosting, panduan teknis",
       badge: "Flagship",
     },
     {
       id: "landing-page",
+      num: "02",
       title: "Landing Page",
       category: "web",
-      shortDesc: "Halaman arahan dengan fokus konversi tinggi untuk promosi produk, campaign iklan, dan akuisisi pelanggan baru.",
-      features: ["Copywriting terarah", "Loading super cepat", "Integrasi WhatsApp & Form"],
-      deliverable: "Desain responsif, domain .com, dan tracking analytics",
+      shortDesc: "Halaman konversi tinggi yang dirancang untuk kampanye iklan, promosi produk unggulan, dan akuisisi leads bisnis.",
+      features: ["Copywriting persuasif", "Struktur layout cepat", "Integrasi WhatsApp Direct"],
+      deliverable: "Domain .com, setup hosting 1 tahun, tracking analytics",
       badge: "High Conversion",
     },
     {
       id: "erp-system",
+      num: "03",
       title: "ERP System (Enterprise)",
       category: "enterprise",
-      shortDesc: "Sistem perencanaan sumber daya terintegrasi untuk mengelola inventaris, keuangan, SDM, dan rantai pasok bisnis.",
-      features: ["Manajemen modul terpadu", "Multi-user role & audit log", "Laporan analitik real-time"],
-      deliverable: "Arsitektur database aman, deployment cloud, dan pelatihan staf",
+      shortDesc: "Sistem perencanaan sumber daya terpadu untuk menghubungkan inventaris, keuangan, pengadaan, dan manajemen operasional.",
+      features: ["Modular & scalable", "Hak akses multi-level", "Laporan analitik real-time"],
+      deliverable: "Arsitektur database andal, deployment server, pelatihan staf",
       badge: "Enterprise",
     },
     {
       id: "ui-ux",
+      num: "04",
       title: "UI / UX Design",
       category: "app",
-      shortDesc: "Riset pengguna, pembuatan arsitektur informasi, wireframe, hingga desain antarmuka interaktif di Figma.",
-      features: ["Design system konsisten", "Interactive prototype", "Uji keterbacaan & aksesibilitas"],
-      deliverable: "File master Figma, design token, dan aset grafis siap koding",
-      badge: "Human Centered",
+      shortDesc: "Riset perilaku pengguna, perancangan kawat gambar wireframe, hingga prototipe interaktif berstandar industri di Figma.",
+      features: ["Design system konsisten", "Interactive prototype", "Pengujian aksesibilitas"],
+      deliverable: "File master Figma, design token, aset grafis siap coding",
+      badge: "User Centered",
     },
     {
       id: "mobile-app",
+      num: "05",
       title: "Aplikasi Mobile",
       category: "app",
-      shortDesc: "Pengembangan aplikasi smartphone Android dan iOS yang responsif, stabil, dan terintegrasi dengan backend modern.",
-      features: ["Cross-platform efisien", "Offline caching & sync", "Integrasi Push Notification"],
-      deliverable: "Build APK/AAB siap publikasi dan dokumentasi REST API",
+      shortDesc: "Pengembangan aplikasi smartphone Android dan iOS yang gesit, stabil, serta terhubung mulus dengan sistem backend cloud.",
+      features: ["Cross-platform efisien", "Offline caching & sync", "Push notification terpadu"],
+      deliverable: "Build APK/AAB siap rilis dan dokumentasi REST API lengkap",
       badge: "iOS & Android",
     },
     {
       id: "company-profile",
+      num: "06",
       title: "Company Profile",
       category: "web",
-      shortDesc: "Situs profil perusahaan yang dirancang elegan untuk membangun reputasi profesional di mata klien dan investor.",
-      features: ["Katalog produk/jasa", "Struktur legalitas & visi misi", "Koneksi media sosial resmi"],
-      deliverable: "Email bisnis korporat, SSL aktif, dan panduan maintenance",
+      shortDesc: "Website profil perusahaan prestisius untuk memikat klien korporasi, investor, dan mitra strategis dengan reputasi kuat.",
+      features: ["Presentasi visi & layanan", "Katalog portofolio resmi", "Email bisnis korporat"],
+      deliverable: "Email bisnis @domain, SSL aktif, jaminan maintenance",
       badge: "Corporate Trust",
     },
     {
       id: "software-custom",
+      num: "07",
       title: "Software Custom",
       category: "enterprise",
-      shortDesc: "Pembuatan perangkat lunak khusus yang disesuaikan secara presisi dengan alur kerja unik operasional bisnis Anda.",
-      features: ["Spesifikasi tailored-fit", "Skalabilitas arsitektur", "Keamanan enkripsi data"],
-      deliverable: "Hak milik kode sumber, SLA pemeliharaan, dan garansi teknis",
+      shortDesc: "Aplikasi sistem kustom yang dibangun dari nol untuk mengotomasi alur kerja khusus yang tidak terakomodasi aplikasi umum.",
+      features: ["Spesifikasi tailored-fit", "Keamanan enkripsi data", "Skalabilitas arsitektur"],
+      deliverable: "Full source code, SLA pemeliharaan, garansi teknis",
       badge: "Tailored",
     },
     {
       id: "crm-system",
+      num: "08",
       title: "Customer Relationship Management (CRM)",
       category: "enterprise",
-      shortDesc: "Platform digital untuk melacak prospek, automasi follow-up penjualan, dan merawat hubungan pelanggan jangka panjang.",
-      features: ["Pipeline deals visual", "Riwayat interaksi pelanggan", "Notifikasi otomatis WhatsApp/Email"],
-      deliverable: "Setup dashboard admin, migrasi data kontak, dan pelatihan tim sales",
+      shortDesc: "Platform digital untuk melacak siklus prospek penjualan, data riwayat klien, dan automasi komunikasi pemasaran.",
+      features: ["Visual sales pipeline", "Riwayat kontak terpadu", "Notifikasi otomatis WhatsApp/Email"],
+      deliverable: "Setup dashboard admin, migrasi data kontak, pelatihan tim",
       badge: "Growth Engine",
     },
   ];
 
   const filteredServices =
-    activeTab === "semua"
+    activeServiceTab === "semua"
       ? services
-      : services.filter((s) => s.category === activeTab);
+      : services.filter((s) => s.category === activeServiceTab);
 
   // Tech stack items
-  const techStack = [
-    { name: "Next.js", category: "Framework", tag: "Fullstack" },
-    { name: "React", category: "Frontend", tag: "UI Library" },
-    { name: "TypeScript", category: "Language", tag: "Type Safety" },
-    { name: "JavaScript", category: "Language", tag: "Core Web" },
-    { name: "HTML5", category: "Markup", tag: "Semantic" },
-    { name: "CSS3", category: "Styling", tag: "Modern Layout" },
-    { name: "Laravel", category: "Backend", tag: "PHP Framework" },
-    { name: "PHP", category: "Backend", tag: "Server Side" },
-    { name: "Python", category: "Backend", tag: "Data & Scripting" },
-    { name: "MySQL", category: "Database", tag: "Relational DB" },
-    { name: "Docker", category: "DevOps", tag: "Containerization" },
-    { name: "Figma", category: "Design", tag: "UI/UX & Prototyping" },
-    { name: "Git", category: "Version Control", tag: "Collaboration" },
+  const techStackRow1 = [
+    { name: "Next.js", tag: "Fullstack" },
+    { name: "React", tag: "Frontend" },
+    { name: "TypeScript", tag: "Language" },
+    { name: "JavaScript", tag: "Core" },
+    { name: "HTML5", tag: "Markup" },
+    { name: "CSS3", tag: "Styling" },
+    { name: "Laravel", tag: "PHP Framework" },
+  ];
+
+  const techStackRow2 = [
+    { name: "PHP", tag: "Backend" },
+    { name: "Python", tag: "Data & API" },
+    { name: "MySQL", tag: "Database" },
+    { name: "Docker", tag: "DevOps" },
+    { name: "Figma", tag: "UI/UX Design" },
+    { name: "Git", tag: "Version Control" },
   ];
 
   // Pricing packages data
@@ -146,15 +195,16 @@ export default function Home() {
     {
       name: "Paket Lite",
       price: "Rp 1.500.000",
-      description: "Solusi hemat dan cepat untuk memulai kehadiran digital bisnis Anda dengan standar profesional.",
-      idealFor: "UMKM, Portfolio Pribadi, & Profil Usaha Awal",
+      description: "Solusi cepat dan efisien untuk kehadiran digital pertama bisnis Anda dengan kredibilitas tinggi.",
+      idealFor: "UMKM, Landing Page, & Profil Usaha",
+      highlight: false,
       features: [
         "Maksimal 5 Halaman Web",
-        "Hosting Cloud 1 Tahun Penuh",
+        "Hosting 1 Tahun Penuh",
         "Domain .com Gratis 1 Tahun",
-        "Maintenance & Monitoring 1 Tahun",
+        "Maintenance & Pemeliharaan 1 Tahun",
         "Modul Dokumentasi Lengkap",
-        "Halaman Responsif di Semua Layar",
+        "Halaman Responsif di Seluruh Layar",
         "Basic Copywriting Terarah",
         "Custom UI/UX Khusus Brand Anda",
         "Setup Email Bisnis Resmi",
@@ -163,36 +213,37 @@ export default function Home() {
         "Full Source Code Diberikan (.zip)",
         "Maksimal Revisi 2x",
       ],
-      highlight: false,
-      whatsappText: "Halo Koneksa Indonesia, saya tertarik memesan Paket Lite (Rp 1.500.000). Bisakah kita jadwalkan konsultasi?",
+      whatsappMsg: "Halo Koneksa Indonesia, saya ingin memesan Paket Lite (Rp 1.500.000). Bisakah kita jadwalkan konsultasi?",
     },
     {
       name: "Paket Pro",
       price: "Rp 2.600.000",
-      description: "Pilihan paling populer untuk bisnis yang ingin mengelola konten mandiri dan memaksimalkan traffic pencarian.",
-      idealFor: "Bisnis Berkembang, Lembaga, & Korporasi Menengah",
+      description: "Paling direkomendasikan untuk bisnis yang ingin mengelola konten secara mandiri dan memaksimalkan traffic pencarian Google.",
+      idealFor: "Bisnis Berkembang & Lembaga Profesional",
+      highlight: true,
       features: [
         "Maksimal 10 Halaman Web",
-        "Admin Panel (CMS) untuk Edit Konten",
+        "Admin Panel (CMS) untuk Edit Konten Mandiri",
         "Integrasi Google Analytics 4 (GA4)",
         "Advanced Copywriting Penjualan",
         "Optimasi SEO Teknis & On-Page",
-        "Hosting Cloud 1 Tahun Penuh",
+        "Hosting 1 Tahun Penuh",
         "Domain .com Gratis 1 Tahun",
-        "Maintenance & Monitoring 1 Tahun",
-        "Custom UI/UX & Responsive Design",
-        "Email Bisnis & Sertifikat SSL",
+        "Maintenance & Pemeliharaan 1 Tahun",
+        "Modul Dokumentasi Lengkap",
+        "Custom UI/UX Khusus Brand Anda",
+        "Email Bisnis Resmi & Sertifikat SSL",
         "Full Source Code Diberikan (.zip)",
         "Maksimal Revisi 4x",
       ],
-      highlight: true,
-      whatsappText: "Halo Koneksa Indonesia, saya ingin berkonsultasi mengenai Paket Pro (Rp 2.600.000) untuk kebutuhan website perusahaan kami.",
+      whatsappMsg: "Halo Koneksa Indonesia, saya ingin memesan Paket Pro (Rp 2.600.000) untuk pembuatan website bisnis kami.",
     },
     {
       name: "Paket Max",
       price: "Rp 5.000.000",
-      description: "Paket lengkap dengan integrasi transaksi digital dan kapasitas halaman luas untuk skala bisnis yang lebih mapan.",
-      idealFor: "Katalog Toko Online, Korporasi, & Sistem Transaksi",
+      description: "Paket lengkap dengan integrasi transaksi pembayaran online dan fleksibilitas halaman luas untuk sistem bisnis yang lebih mapan.",
+      idealFor: "Katalog Toko Online & Sistem Korporasi",
+      highlight: false,
       features: [
         "Maksimal 15 Halaman Web",
         "Integrasi Payment Gateway Otomatis",
@@ -200,370 +251,392 @@ export default function Home() {
         "Admin Panel (CMS) Khusus & Multi-Role",
         "Integrasi GA4 & Google Search Console",
         "Optimasi Kecepatan Ekstra (CDN & Cache)",
-        "Hosting & Domain .com 1 Tahun",
+        "Hosting 1 Tahun Penuh",
+        "Domain .com Gratis 1 Tahun",
         "Maintenance & Backup Terjadwal 1 Tahun",
-        "Email Bisnis Multi Akun & SSL",
-        "Full Source Code (.zip) + Deployment",
+        "Email Bisnis Multi Akun & Sertifikat SSL",
+        "Full Source Code Diberikan (.zip)",
         "Maksimal Revisi 5x",
       ],
-      highlight: false,
-      whatsappText: "Halo Koneksa Indonesia, saya ingin mendiskusikan implementasi Paket Max (Rp 5.000.000) termasuk Payment Gateway.",
+      whatsappMsg: "Halo Koneksa Indonesia, saya ingin berdiskusi mengenai Paket Max (Rp 5.000.000) dengan Payment Gateway.",
     },
   ];
 
-  // Handler for form submit to WhatsApp
-  const handleConsultationSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const encodedMsg = encodeURIComponent(
-      `Halo Koneksa Indonesia!\n\n` +
-      `Nama: ${formData.name}\n` +
-      `Perusahaan/Institusi: ${formData.company || "-"}\n` +
-      `Layanan yang Diminati: ${formData.service}\n` +
-      `Pilihan Paket: ${formData.packageChoice}\n` +
-      `Pesan/Kebutuhan: ${formData.message}\n\n` +
-      `Mohon info tindak lanjut dan estimasi waktu konsultasi. Terima kasih!`
-    );
-    window.open(`https://wa.me/6288217139228?text=${encodedMsg}`, "_blank");
-    setFormSubmitted(true);
-  };
+  // FAQ Items (Refit Accordion Pattern)
+  const faqItems = [
+    {
+      q: "Di mana lokasi kantor dan basis operasional Koneksa Indonesia?",
+      a: "Koneksa Indonesia berpusat di Surabaya, Jawa Timur, tepatnya di Jl. Sidosermo Gg. Damri No.39, Sidosermo, Kec. Wonocolo. Kami melayani klien baik dari wilayah Surabaya, Jawa Timur, maupun seluruh Indonesia secara daring dan tatap muka.",
+    },
+    {
+      q: "Berapa lama estimasi pengerjaan website atau sistem aplikasi?",
+      a: "Untuk Paket Lite dan Landing Page standar berkisar antara 7 sampai 14 hari kerja. Untuk Paket Pro dan Website Company Profile berkisar 14 sampai 25 hari kerja. Sementara sistem kustom seperti ERP, CRM, dan Aplikasi Mobile disesuaikan dengan cakupan modul yang disepakati bersama.",
+    },
+    {
+      q: "Apakah biaya paket sudah termasuk domain dan hosting?",
+      a: "Benar! Seluruh paket (Lite, Pro, dan Max) sudah mencakup hosting cloud selama 1 tahun, domain .com selama 1 tahun, sertifikat keamanan SSL aktif, serta pemeliharaan teknis selama 1 tahun.",
+    },
+    {
+      q: "Apakah klien mendapatkan kepemilikan kode sumber (source code)?",
+      a: "Ya, 100%. Kami menyerahkan seluruh source code project dalam bentuk arsip zip lengkap beserta dokumentasinya tanpa penguncian hak cipta yang memberatkan klien.",
+    },
+    {
+      q: "Bagaimana alur untuk memulai kerja sama dengan Koneksa Indonesia?",
+      a: "Sangat mudah: Anda cukup menghubungi kami via WhatsApp atau mengisi formulir kontak di website ini. Kami akan berdiskusi mengenai kebutuhan, memberikan proposal penawaran, melakukan proses desain, koding, pengujian, hingga peluncuran live.",
+    },
+  ];
 
   return (
-    <div className="relative min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-blue-600 selection:text-white">
+    <div className="relative min-h-screen bg-neutral-50/60 text-neutral-900 selection:bg-neutral-900 selection:text-white">
       {/* =========================================================================
-          NAVIGATION BAR
+          FLOATING PILL NAVBAR (Refit Framer Style)
          ========================================================================= */}
-      <header className="sticky top-0 z-50 w-full border-b border-slate-200/80 bg-white/90 backdrop-blur-md transition-all">
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="fixed top-4 sm:top-6 inset-x-0 z-50 flex justify-center px-4 pointer-events-none">
+        <header
+          className={`pointer-events-auto flex items-center justify-between w-full max-w-5xl rounded-full border transition-all duration-300 px-4 sm:px-6 py-2.5 sm:py-3 ${
+            scrolled
+              ? "border-neutral-200/90 bg-white/90 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.08)]"
+              : "border-neutral-200/70 bg-white/80 backdrop-blur-md shadow-[0_4px_20px_rgb(0,0,0,0.04)]"
+          }`}
+        >
           {/* Logo & Brand Name */}
           <a
             href="#beranda"
-            className="group flex items-center gap-3.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-lg p-1"
+            className="group flex items-center gap-3 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900"
           >
-            <div className="relative h-11 w-11 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-xs transition-transform group-hover:scale-105">
+            <div className="relative h-9 w-9 overflow-hidden rounded-full border border-neutral-200 bg-white shadow-2xs transition-transform duration-300 group-hover:scale-105">
               <Image
                 src="/koneksa-logo.jpg"
                 alt="Logo Koneksa Indonesia"
                 fill
-                className="object-contain p-1"
+                className="object-contain p-0.5"
                 priority
               />
             </div>
             <div className="flex flex-col">
-              <span className="text-lg font-bold tracking-tight text-slate-950">
+              <span className="text-sm font-extrabold tracking-tight text-neutral-950">
                 KONEKSA
               </span>
-              <span className="text-[11px] font-semibold tracking-wider text-blue-700 uppercase">
+              <span className="text-[10px] font-bold tracking-widest text-blue-700 uppercase -mt-0.5">
                 INDONESIA
               </span>
             </div>
           </a>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden items-center gap-8 md:flex">
+          <nav className="hidden md:flex items-center gap-1 text-sm font-medium text-neutral-600">
             <a
               href="#beranda"
-              className="text-sm font-medium text-slate-700 transition-colors hover:text-blue-700 focus:outline-none focus-visible:text-blue-700"
+              className="rounded-full px-3.5 py-1.5 transition-colors hover:text-neutral-950 hover:bg-neutral-100/80"
             >
               Beranda
             </a>
             <a
               href="#tentang-kami"
-              className="text-sm font-medium text-slate-700 transition-colors hover:text-blue-700 focus:outline-none focus-visible:text-blue-700"
+              className="rounded-full px-3.5 py-1.5 transition-colors hover:text-neutral-950 hover:bg-neutral-100/80"
             >
               Tentang Kami
             </a>
             <a
               href="#layanan"
-              className="text-sm font-medium text-slate-700 transition-colors hover:text-blue-700 focus:outline-none focus-visible:text-blue-700"
+              className="rounded-full px-3.5 py-1.5 transition-colors hover:text-neutral-950 hover:bg-neutral-100/80"
             >
               Layanan
             </a>
             <a
               href="#klien"
-              className="text-sm font-medium text-slate-700 transition-colors hover:text-blue-700 focus:outline-none focus-visible:text-blue-700"
+              className="rounded-full px-3.5 py-1.5 transition-colors hover:text-neutral-950 hover:bg-neutral-100/80"
             >
-              Klien & Tech
-            </a>
-            <a
-              href="#tim"
-              className="text-sm font-medium text-slate-700 transition-colors hover:text-blue-700 focus:outline-none focus-visible:text-blue-700"
-            >
-              Tim
+              Klien
             </a>
             <a
               href="#harga"
-              className="text-sm font-medium text-slate-700 transition-colors hover:text-blue-700 focus:outline-none focus-visible:text-blue-700"
+              className="rounded-full px-3.5 py-1.5 transition-colors hover:text-neutral-950 hover:bg-neutral-100/80"
             >
-              Paket Harga
+              Harga
+            </a>
+            <a
+              href="#faqs"
+              className="rounded-full px-3.5 py-1.5 transition-colors hover:text-neutral-950 hover:bg-neutral-100/80"
+            >
+              FAQ
             </a>
             <a
               href="#kontak"
-              className="text-sm font-medium text-slate-700 transition-colors hover:text-blue-700 focus:outline-none focus-visible:text-blue-700"
+              className="rounded-full px-3.5 py-1.5 transition-colors hover:text-neutral-950 hover:bg-neutral-100/80"
             >
               Kontak
             </a>
           </nav>
 
-          {/* Desktop Actions */}
-          <div className="hidden items-center gap-3 md:flex">
+          {/* Right Action: Available Status & Pill Button */}
+          <div className="flex items-center gap-2 sm:gap-3">
             <a
-              href="https://wa.me/6288217139228?text=Halo%20Koneksa%20Indonesia,%20saya%20ingin%20berkonsultasi%20mengenai%20kebutuhan%20teknologi."
+              href="https://wa.me/6288217139228?text=Halo%20Koneksa%20Indonesia,%20saya%20tertarik%20bekerja%20sama."
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-blue-700 px-5 text-sm font-semibold text-white shadow-xs transition-all hover:bg-blue-800 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 active:scale-98"
+              className="group hidden sm:inline-flex items-center gap-2 rounded-full bg-neutral-950 px-4 py-2 text-xs font-semibold text-white transition-all duration-300 hover:bg-neutral-800 hover:shadow-md active:scale-95"
             >
+              <span>Konsultasi Proyek</span>
               <svg
-                className="h-4 w-4"
+                className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
-              Konsultasi Gratis
+            </a>
+
+            {/* Mobile Hamburger Button */}
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 text-neutral-800 hover:bg-neutral-100 md:hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900"
+              aria-label={mobileMenuOpen ? "Tutup navigasi" : "Buka navigasi"}
+              aria-expanded={mobileMenuOpen}
+            >
+              {mobileMenuOpen ? (
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
+            </button>
+          </div>
+        </header>
+      </div>
+
+      {/* Mobile Drawer Menu */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-x-4 top-20 z-50 rounded-3xl border border-neutral-200 bg-white/95 p-6 backdrop-blur-xl shadow-2xl md:hidden animate-in fade-in zoom-in-95 duration-200">
+          <div className="flex flex-col space-y-3">
+            {[
+              { label: "Beranda", href: "#beranda" },
+              { label: "Tentang Kami", href: "#tentang-kami" },
+              { label: "Layanan Kami", href: "#layanan" },
+              { label: "Klien & Teknologi", href: "#klien" },
+              { label: "Tim Organisasi", href: "#tim" },
+              { label: "Paket Harga", href: "#harga" },
+              { label: "Pertanyaan (FAQ)", href: "#faqs" },
+              { label: "Kontak & Alamat", href: "#kontak" },
+            ].map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="rounded-xl px-3 py-2 text-base font-semibold text-neutral-800 transition-colors hover:bg-neutral-100"
+              >
+                {item.label}
+              </a>
+            ))}
+            <a
+              href="https://wa.me/6288217139228"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setMobileMenuOpen(false)}
+              className="mt-3 flex h-11 items-center justify-center rounded-full bg-neutral-950 font-semibold text-white shadow-sm"
+            >
+              Mulai Konsultasi via WhatsApp
             </a>
           </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            type="button"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="flex h-11 w-11 items-center justify-center rounded-lg border border-slate-200 text-slate-700 transition-colors hover:bg-slate-100 md:hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
-            aria-label={mobileMenuOpen ? "Tutup menu navigasi" : "Buka menu navigasi"}
-            aria-expanded={mobileMenuOpen}
-          >
-            {mobileMenuOpen ? (
-              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            ) : (
-              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            )}
-          </button>
         </div>
-
-        {/* Mobile Navigation Drawer */}
-        {mobileMenuOpen && (
-          <div className="border-b border-slate-200 bg-white px-4 pt-2 pb-6 shadow-xl md:hidden">
-            <div className="flex flex-col space-y-3 pt-2">
-              <a
-                href="#beranda"
-                onClick={() => setMobileMenuOpen(false)}
-                className="rounded-lg px-3 py-2 text-base font-medium text-slate-800 hover:bg-slate-50"
-              >
-                Beranda
-              </a>
-              <a
-                href="#tentang-kami"
-                onClick={() => setMobileMenuOpen(false)}
-                className="rounded-lg px-3 py-2 text-base font-medium text-slate-800 hover:bg-slate-50"
-              >
-                Tentang Kami
-              </a>
-              <a
-                href="#layanan"
-                onClick={() => setMobileMenuOpen(false)}
-                className="rounded-lg px-3 py-2 text-base font-medium text-slate-800 hover:bg-slate-50"
-              >
-                Layanan
-              </a>
-              <a
-                href="#klien"
-                onClick={() => setMobileMenuOpen(false)}
-                className="rounded-lg px-3 py-2 text-base font-medium text-slate-800 hover:bg-slate-50"
-              >
-                Klien & Tech
-              </a>
-              <a
-                href="#tim"
-                onClick={() => setMobileMenuOpen(false)}
-                className="rounded-lg px-3 py-2 text-base font-medium text-slate-800 hover:bg-slate-50"
-              >
-                Tim
-              </a>
-              <a
-                href="#harga"
-                onClick={() => setMobileMenuOpen(false)}
-                className="rounded-lg px-3 py-2 text-base font-medium text-slate-800 hover:bg-slate-50"
-              >
-                Paket Harga
-              </a>
-              <a
-                href="#kontak"
-                onClick={() => setMobileMenuOpen(false)}
-                className="rounded-lg px-3 py-2 text-base font-medium text-slate-800 hover:bg-slate-50"
-              >
-                Kontak
-              </a>
-              <a
-                href="https://wa.me/6288217139228?text=Halo%20Koneksa%20Indonesia,%20saya%20ingin%20berkonsultasi."
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setMobileMenuOpen(false)}
-                className="mt-3 flex h-11 w-full items-center justify-center rounded-lg bg-blue-700 text-center font-semibold text-white shadow-xs"
-              >
-                Hubungi via WhatsApp
-              </a>
-            </div>
-          </div>
-        )}
-      </header>
+      )}
 
       {/* =========================================================================
-          HERO SECTION (Beranda Utama)
+          HERO SECTION (Refit Aesthetic: Minimal, Confident, Spatial)
          ========================================================================= */}
       <section
         id="beranda"
-        className="relative overflow-hidden border-b border-slate-200 bg-white pt-16 pb-24 lg:pt-24 lg:pb-32"
+        className="relative overflow-hidden pt-32 pb-20 sm:pt-40 sm:pb-28 lg:pt-44 lg:pb-36 border-b border-neutral-200/80 bg-white"
       >
-        {/* Subtle geometric background motif */}
-        <div className="absolute inset-0 bg-tech-dots opacity-60 pointer-events-none" />
-        <div className="absolute -top-32 right-1/4 h-96 w-96 rounded-full bg-blue-100/60 blur-3xl pointer-events-none animate-pulse-subtle" />
+        {/* Subtle grid pattern background */}
+        <div className="absolute inset-0 bg-grid-subtle opacity-70 pointer-events-none" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 h-96 w-[700px] rounded-full bg-blue-50/70 blur-3xl pointer-events-none animate-pulse-glow" />
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-8">
-            {/* Left Content Column */}
-            <div className="text-center lg:col-span-7 lg:text-left">
-              {/* Regional Anchor Badge */}
-              <div className="inline-flex items-center gap-2.5 rounded-full border border-slate-200 bg-slate-50 px-3.5 py-1.5 text-xs font-semibold text-slate-800 shadow-2xs">
-                <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-                <span>Berpusat di Surabaya, Melayani Seluruh Indonesia</span>
-              </div>
-
-              {/* Main Headline & Tagline */}
-              <h1 className="mt-6 text-4xl font-extrabold tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">
-                Solusi Digital,{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-indigo-700 to-sky-600">
-                  Mitra Terpercaya.
-                </span>
-              </h1>
-
-              {/* Sub-copy */}
-              <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-600 lg:text-xl">
-                Koneksa Indonesia hadir untuk menyederhanakan kerumitan teknologi bagi UMKM, profesional, dan korporasi. Kami membangun sistem informasi, website, dan aplikasi yang berstandar tinggi, efisien, serta dirancang untuk pertumbuhan bisnis nyata.
-              </p>
-
-              {/* CTAs */}
-              <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center lg:justify-start">
-                <a
-                  href="#layanan"
-                  className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-blue-700 px-7 text-base font-semibold text-white shadow-sm transition-all hover:bg-blue-800 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 active:scale-98"
-                >
-                  Jelajahi Layanan
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </a>
-                <a
-                  href="#kontak"
-                  className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-7 text-base font-semibold text-slate-800 shadow-2xs transition-all hover:border-slate-400 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 active:scale-98"
-                >
-                  Hubungi Kami
-                </a>
-              </div>
-
-              {/* Trust Indicators */}
-              <div className="mt-12 grid grid-cols-3 gap-4 border-t border-slate-100 pt-8 sm:max-w-lg lg:max-w-none">
-                <div>
-                  <div className="text-xl font-bold text-slate-900 sm:text-2xl">100%</div>
-                  <div className="mt-1 text-xs font-medium text-slate-500">Source Code Milik Klien</div>
-                </div>
-                <div>
-                  <div className="text-xl font-bold text-slate-900 sm:text-2xl">Surabaya</div>
-                  <div className="mt-1 text-xs font-medium text-slate-500">Basis Markas Operasional</div>
-                </div>
-                <div>
-                  <div className="text-xl font-bold text-slate-900 sm:text-2xl">End-to-End</div>
-                  <div className="mt-1 text-xs font-medium text-slate-500">Desain hingga Maintenance</div>
-                </div>
-              </div>
+          {/* Header Tag Capsule */}
+          <div className="flex justify-center">
+            <div className="inline-flex items-center gap-2.5 rounded-full border border-neutral-200 bg-neutral-50 px-4 py-1.5 text-xs font-semibold text-neutral-800 shadow-2xs transition-transform hover:scale-102">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping-soft absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600" />
+              </span>
+              <span>Koneksa Indonesia : Solusi Digital Berpusat di Surabaya</span>
             </div>
+          </div>
 
-            {/* Right Visual Card Column */}
-            <div className="lg:col-span-5">
-              <div className="relative mx-auto max-w-md lg:max-w-none">
-                {/* Decorative Backing Frame */}
-                <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-xl lg:p-8">
-                  {/* Card Header with Logo */}
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-5">
-                    <div className="flex items-center gap-3">
-                      <div className="relative h-12 w-12 overflow-hidden rounded-lg border border-slate-100 bg-white p-1">
-                        <Image
-                          src="/koneksa-logo.jpg"
-                          alt="Koneksa Indonesia"
-                          fill
-                          className="object-contain"
-                        />
-                      </div>
-                      <div>
-                        <h2 className="text-base font-bold text-slate-900">Koneksa Indonesia</h2>
-                        <p className="text-xs text-slate-500">Digital Solutions Engine</p>
-                      </div>
-                    </div>
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                      Aktif Siaga
+          {/* Grand Main Headline */}
+          <div className="mt-8 text-center max-w-4xl mx-auto">
+            <h1 className="text-4xl font-extrabold tracking-tight text-neutral-950 sm:text-6xl lg:text-7xl">
+              Solusi Digital,{" "}
+              <span className="inline-block bg-gradient-to-r from-neutral-950 via-blue-900 to-indigo-800 bg-clip-text text-transparent">
+                Mitra Terpercaya.
+              </span>
+            </h1>
+
+            {/* Sub-headline */}
+            <p className="mt-6 text-lg sm:text-xl text-neutral-600 max-w-2xl mx-auto leading-relaxed font-normal">
+              Kami menyederhanakan kerumitan teknologi bagi UMKM, profesional, dan korporasi melalui rekayasa sistem informasi, website, dan aplikasi yang berstandar tinggi dan berkinerja nyata.
+            </p>
+
+            {/* CTA Buttons */}
+            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3.5">
+              <a
+                href="#layanan"
+                className="group flex h-12 w-full sm:w-auto items-center justify-center gap-2.5 rounded-full bg-neutral-950 px-8 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:bg-neutral-800 hover:shadow-lg active:scale-98"
+              >
+                <span>Jelajahi Layanan</span>
+                <svg
+                  className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </a>
+
+              <a
+                href="#kontak"
+                className="flex h-12 w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-neutral-300 bg-white px-8 text-sm font-semibold text-neutral-800 transition-all duration-300 hover:border-neutral-400 hover:bg-neutral-50 active:scale-98"
+              >
+                Hubungi Kami
+              </a>
+            </div>
+          </div>
+
+          {/* =========================================================================
+              HERO SHOWCASE COMPONENT (Refit Interactive Feature Display)
+             ========================================================================= */}
+          <div className="mt-16 sm:mt-20">
+            <div className="relative mx-auto max-w-5xl rounded-3xl border border-neutral-200 bg-white p-3 sm:p-5 shadow-framer">
+              {/* Top Showcase Toolbar */}
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-b border-neutral-100 pb-4 px-3">
+                <div className="flex items-center gap-2">
+                  <div className="h-3 w-3 rounded-full bg-rose-400" />
+                  <div className="h-3 w-3 rounded-full bg-amber-400" />
+                  <div className="h-3 w-3 rounded-full bg-emerald-400" />
+                  <span className="ml-2 text-xs font-mono text-neutral-400">koneksaindonesia.com/ecosystem</span>
+                </div>
+
+                {/* Interactive Feature Tabs */}
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {[
+                    "ERP & Cloud",
+                    "Custom Website",
+                    "Mobile & UI/UX",
+                    "CRM & Automasi",
+                  ].map((tab, idx) => (
+                    <button
+                      key={tab}
+                      onClick={() => setActiveHeroTab(idx)}
+                      className={`rounded-full px-3 py-1 text-xs font-semibold transition-all ${
+                        activeHeroTab === idx
+                          ? "bg-neutral-950 text-white shadow-xs"
+                          : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+                      }`}
+                    >
+                      {tab}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Showcase Interior View */}
+              <div className="mt-4 rounded-2xl bg-neutral-900 p-6 sm:p-8 text-white relative overflow-hidden">
+                <div className="absolute top-0 right-0 h-80 w-80 rounded-full bg-blue-600/15 blur-3xl pointer-events-none" />
+
+                <div className="relative z-10 grid gap-6 md:grid-cols-12 items-center">
+                  <div className="md:col-span-7">
+                    <span className="inline-block rounded-full bg-blue-500/20 px-3 py-1 text-xs font-semibold text-blue-300">
+                      {activeHeroTab === 0 && "Sistem Terintegrasi Perusahaan"}
+                      {activeHeroTab === 1 && "High-Performance Modern Web"}
+                      {activeHeroTab === 2 && "Native & Cross-Platform Experience"}
+                      {activeHeroTab === 3 && "Customer Pipeline Engine"}
                     </span>
-                  </div>
 
-                  {/* Architecture Blueprint Mockup */}
-                  <div className="mt-6 space-y-4">
-                    <div className="rounded-xl border border-slate-100 bg-slate-50 p-4">
-                      <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                        Cakupan Solusi Utama
-                      </div>
-                      <div className="mt-2.5 flex flex-wrap gap-1.5">
-                        <span className="rounded-md bg-white px-2.5 py-1 text-xs font-medium text-slate-700 border border-slate-200">
-                          Web App
-                        </span>
-                        <span className="rounded-md bg-white px-2.5 py-1 text-xs font-medium text-slate-700 border border-slate-200">
-                          Mobile App
-                        </span>
-                        <span className="rounded-md bg-white px-2.5 py-1 text-xs font-medium text-slate-700 border border-slate-200">
-                          ERP System
-                        </span>
-                        <span className="rounded-md bg-white px-2.5 py-1 text-xs font-medium text-slate-700 border border-slate-200">
-                          CRM
-                        </span>
-                        <span className="rounded-md bg-white px-2.5 py-1 text-xs font-medium text-slate-700 border border-slate-200">
-                          UI/UX
-                        </span>
-                      </div>
-                    </div>
+                    <h3 className="mt-3 text-2xl sm:text-3xl font-extrabold tracking-tight">
+                      {activeHeroTab === 0 && "ERP System untuk Otomasi Bisnis Menyeluruh"}
+                      {activeHeroTab === 1 && "Website Responsif & Berkecepatan Tinggi"}
+                      {activeHeroTab === 2 && "Aplikasi Mobile & UI/UX Berkelas"}
+                      {activeHeroTab === 3 && "CRM untuk Manajemen Penjualan Terukur"}
+                    </h3>
 
-                    <div className="rounded-xl border border-slate-100 bg-slate-50 p-4">
-                      <div className="flex items-center justify-between text-xs font-medium text-slate-600">
-                        <span>Standar Rekayasa Kode</span>
-                        <span className="font-semibold text-blue-700">Optimal</span>
-                      </div>
-                      <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-slate-200">
-                        <div className="h-full w-11/12 rounded-full bg-blue-600" />
-                      </div>
-                    </div>
+                    <p className="mt-3 text-sm text-neutral-300 leading-relaxed">
+                      {activeHeroTab === 0 &&
+                        "Menyatukan inventaris gudang, modul akuntansi, pesanan penjualan, dan laporan performa dalam satu dashboard aman dan cepat."}
+                      {activeHeroTab === 1 &&
+                        "Dibangun dengan teknologi Next.js, React, dan TypeScript untuk menjamin indeks SEO Google optimal dan waktu muat instan."}
+                      {activeHeroTab === 2 &&
+                        "Desain antarmuka intuitif di Figma yang dieksekusi menjadi aplikasi smartphone berdaya tahan tinggi dan mudah digunakan."}
+                      {activeHeroTab === 3 &&
+                        "Pantau leads, riwayat interaksi pelanggan, serta integrasi pesan follow-up otomatis untuk melipatgandakan konversi bisnis."}
+                    </p>
 
-                    {/* Quick Support Card */}
-                    <div className="flex items-center justify-between rounded-xl border border-blue-100 bg-blue-50/60 p-4">
-                      <div>
-                        <div className="text-xs font-bold text-blue-950">Konsultasi Langsung</div>
-                        <div className="text-xs text-blue-800">Respons cepat via WhatsApp</div>
-                      </div>
+                    <div className="mt-6 flex flex-wrap items-center gap-3">
                       <a
-                        href="https://wa.me/6288217139228"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="rounded-lg bg-blue-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-800 transition-colors"
+                        href="#kontak"
+                        className="rounded-full bg-white px-5 py-2 text-xs font-bold text-neutral-950 transition-colors hover:bg-neutral-200"
                       >
-                        Chat Sekarang
+                        Mulai Proyek
+                      </a>
+                      <a
+                        href="#layanan"
+                        className="rounded-full border border-neutral-700 px-5 py-2 text-xs font-semibold text-neutral-300 transition-colors hover:bg-neutral-800"
+                      >
+                        Pelajari Detail
                       </a>
                     </div>
                   </div>
+
+                  {/* Architecture Mini Mockup */}
+                  <div className="md:col-span-5">
+                    <div className="rounded-xl border border-neutral-800 bg-neutral-950/80 p-4 space-y-3 font-mono text-xs">
+                      <div className="flex items-center justify-between text-neutral-400">
+                        <span>Status Sistem</span>
+                        <span className="text-emerald-400 font-bold flex items-center gap-1.5">
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                          Online 100%
+                        </span>
+                      </div>
+                      <div className="border-t border-neutral-800 pt-2 flex items-center justify-between text-neutral-400">
+                        <span>Basis Kode</span>
+                        <span className="text-white">Clean Code & Type Safe</span>
+                      </div>
+                      <div className="border-t border-neutral-800 pt-2 flex items-center justify-between text-neutral-400">
+                        <span>Hak Cipta</span>
+                        <span className="text-blue-400">100% Milik Klien</span>
+                      </div>
+                      <div className="border-t border-neutral-800 pt-2 flex items-center justify-between text-neutral-400">
+                        <span>Markas</span>
+                        <span className="text-white">Surabaya, Indonesia</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 4 Bottom Metric Counter Pills (Refit Style) */}
+              <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
+                <div className="rounded-2xl border border-neutral-100 bg-neutral-50/80 p-4 text-center">
+                  <div className="text-2xl sm:text-3xl font-extrabold text-neutral-950 tracking-tight">100%</div>
+                  <div className="text-xs text-neutral-500 font-medium mt-0.5">Source Code Milik Klien</div>
+                </div>
+                <div className="rounded-2xl border border-neutral-100 bg-neutral-50/80 p-4 text-center">
+                  <div className="text-2xl sm:text-3xl font-extrabold text-neutral-950 tracking-tight">Surabaya</div>
+                  <div className="text-xs text-neutral-500 font-medium mt-0.5">Basis Markas Operasional</div>
+                </div>
+                <div className="rounded-2xl border border-neutral-100 bg-neutral-50/80 p-4 text-center">
+                  <div className="text-2xl sm:text-3xl font-extrabold text-neutral-950 tracking-tight">3+</div>
+                  <div className="text-xs text-neutral-500 font-medium mt-0.5">Institusi & Klien Teruji</div>
+                </div>
+                <div className="rounded-2xl border border-neutral-100 bg-neutral-50/80 p-4 text-center">
+                  <div className="text-2xl sm:text-3xl font-extrabold text-neutral-950 tracking-tight">End-to-End</div>
+                  <div className="text-xs text-neutral-500 font-medium mt-0.5">Desain sampai Maintenance</div>
                 </div>
               </div>
             </div>
@@ -572,93 +645,197 @@ export default function Home() {
       </section>
 
       {/* =========================================================================
-          TENTANG KAMI (About Us)
+          KLIEN TERPERCAYA & TECH MARQUEE (Refit Trust Component)
          ========================================================================= */}
-      <section id="tentang-kami" className="border-b border-slate-200 bg-slate-50/70 py-20 lg:py-28">
+      <section id="klien" className="border-b border-neutral-200/80 bg-white py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            <span className="text-xs font-bold tracking-widest text-blue-700 uppercase">
-              Tentang Kami
+          <div className="text-center">
+            <span className="text-xs font-bold tracking-widest text-neutral-400 uppercase">
+              Klien & Reputasi
             </span>
-            <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-950 sm:text-4xl">
-              Menghadirkan Solusi Digital yang Menyederhanakan Kerumitan
+            <h2 className="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-neutral-950">
+              Telah Dipercaya oleh Berbagai Klien & Institusi
             </h2>
-            <p className="mt-4 text-base leading-relaxed text-slate-600 sm:text-lg">
-              Koneksa Indonesia berpusat di Surabaya, Jawa Timur. Kami didirikan dengan tekad untuk menjembatani tantangan digitalisasi bagi UMKM, profesional perorangan, hingga korporasi agar memiliki infrastruktur teknologi yang tangguh dan mudah dikelola.
+            <p className="mt-2 text-sm text-neutral-500 max-w-xl mx-auto">
+              Dedikasi nyata kami dalam membangun sistem yang andal bagi institusi pendidikan, studio kreatif, dan korporasi.
             </p>
           </div>
 
-          {/* Visi & Misi Cards */}
-          <div className="mt-16 grid gap-8 lg:grid-cols-12">
-            {/* Visi Column */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-xs lg:col-span-5 flex flex-col justify-between">
-              <div>
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
-                  <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
-                </div>
-                <h3 className="mt-6 text-xl font-bold text-slate-950">Visi Perusahaan</h3>
-                <p className="mt-3 text-slate-600 leading-relaxed">
-                  Menjadi mitra teknologi penyedia layanan di Indonesia yang memberdayakan UMKM, Profesional, dan Korporasi melalui adopsi teknologi yang terjangkau, berkelanjutan, dan berdampak nyata pada efektivitas bisnis.
-                </p>
+          {/* 3 Real Client Cards */}
+          <div className="mt-10 grid gap-6 sm:grid-cols-3 max-w-5xl mx-auto">
+            <div className="rounded-2xl border border-neutral-200 bg-neutral-50/60 p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-neutral-300 hover:shadow-framer">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-neutral-950 text-white font-extrabold text-lg">
+                14
               </div>
+              <h3 className="mt-4 text-lg font-bold text-neutral-950">SMA N 14</h3>
+              <p className="text-xs font-semibold text-blue-700 uppercase tracking-wider mt-1">
+                Institusi Pendidikan
+              </p>
+              <p className="mt-2.5 text-xs text-neutral-600 leading-relaxed">
+                Pengembangan sistem informasi sekolah dan infrastruktur platform web pendukung kegiatan akademik.
+              </p>
+            </div>
 
-              <div className="mt-8 border-t border-slate-100 pt-6">
-                <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                  <svg className="h-4 w-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  Lokasi: Surabaya, Jawa Timur
-                </div>
+            <div className="rounded-2xl border border-neutral-200 bg-neutral-50/60 p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-neutral-300 hover:shadow-framer">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-neutral-950 text-white font-extrabold text-lg">
+                ATM
+              </div>
+              <h3 className="mt-4 text-lg font-bold text-neutral-950">ATM Studio</h3>
+              <p className="text-xs font-semibold text-blue-700 uppercase tracking-wider mt-1">
+                Creative Digital Studio
+              </p>
+              <p className="mt-2.5 text-xs text-neutral-600 leading-relaxed">
+                Pengembangan web portfolio interaktif, tata kelola aset digital, dan performa visual responsif.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-neutral-200 bg-neutral-50/60 p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-neutral-300 hover:shadow-framer">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-neutral-950 text-white font-extrabold text-lg">
+                PLN
+              </div>
+              <h3 className="mt-4 text-lg font-bold text-neutral-950">PLN Icon Plus</h3>
+              <p className="text-xs font-semibold text-blue-700 uppercase tracking-wider mt-1">
+                Telekomunikasi & Energi
+              </p>
+              <p className="mt-2.5 text-xs text-neutral-600 leading-relaxed">
+                Kemitraan solusi integrasi teknologi informasi dan otomatisasi digital berstandar korporasi skala nasional.
+              </p>
+            </div>
+          </div>
+
+          {/* Infinite Tech Marquee (Refit Signature Motion) */}
+          <div className="mt-16 pt-10 border-t border-neutral-100">
+            <div className="text-center mb-6">
+              <span className="text-xs font-bold tracking-widest text-neutral-400 uppercase">
+                Teknologi yang Dikuasai
+              </span>
+            </div>
+
+            {/* Marquee Row 1 */}
+            <div className="relative w-full overflow-hidden py-1">
+              <div className="animate-marquee-left flex gap-3">
+                {[...techStackRow1, ...techStackRow1, ...techStackRow1, ...techStackRow1].map((tech, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-2 text-xs font-bold text-neutral-800 shadow-2xs hover:border-neutral-400 transition-colors"
+                  >
+                    <span>{tech.name}</span>
+                    <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] text-neutral-500 font-normal">
+                      {tech.tag}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Misi Column (3 Poin Misi) */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-xs lg:col-span-7">
-              <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-100 text-indigo-700">
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
+            {/* Marquee Row 2 */}
+            <div className="relative w-full overflow-hidden py-1 mt-2.5">
+              <div className="animate-marquee-right flex gap-3">
+                {[...techStackRow2, ...techStackRow2, ...techStackRow2, ...techStackRow2].map((tech, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-2 text-xs font-bold text-neutral-800 shadow-2xs hover:border-neutral-400 transition-colors"
+                  >
+                    <span>{tech.name}</span>
+                    <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] text-neutral-500 font-normal">
+                      {tech.tag}
+                    </span>
+                  </div>
+                ))}
               </div>
-              <h3 className="mt-6 text-xl font-bold text-slate-950">Misi Perusahaan</h3>
-              <p className="mt-2 text-sm text-slate-500">Tiga komitmen inti kami dalam setiap pekerjaan:</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-              <div className="mt-6 space-y-5">
-                <div className="flex gap-4">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-50 font-bold text-blue-700 text-sm">
-                    1
+      {/* =========================================================================
+          TENTANG KAMI (About Us - Bento Editorial Style)
+         ========================================================================= */}
+      <section id="tentang-kami" className="border-b border-neutral-200/80 bg-neutral-50/70 py-20 lg:py-28">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <span className="text-xs font-bold tracking-widest text-blue-700 uppercase">
+              Tentang Kami
+            </span>
+            <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-neutral-950 sm:text-4xl">
+              Menghadirkan Solusi Digital untuk Menyederhanakan Kerumitan Teknologi
+            </h2>
+            <p className="mt-4 text-base sm:text-lg text-neutral-600 leading-relaxed">
+              Koneksa Indonesia berpusat di Surabaya, didirikan untuk memberdayakan UMKM, profesional, dan korporasi agar memiliki sistem digital yang tepat guna, efisien, dan berkelanjutan.
+            </p>
+          </div>
+
+          {/* Asymmetric Bento Layout (Refit Style) */}
+          <div className="mt-12 grid gap-6 lg:grid-cols-12 items-stretch">
+            {/* Visi Card */}
+            <div className="lg:col-span-5 rounded-3xl border border-neutral-200 bg-neutral-950 p-8 sm:p-10 text-white flex flex-col justify-between shadow-framer relative overflow-hidden">
+              <div className="absolute top-0 right-0 h-48 w-48 rounded-full bg-blue-600/20 blur-2xl" />
+
+              <div>
+                <span className="inline-block rounded-full bg-neutral-800 px-3 py-1 text-xs font-semibold text-neutral-300">
+                  Visi Perusahaan
+                </span>
+
+                <blockquote className="mt-6 text-xl sm:text-2xl font-bold leading-snug">
+                  "Menjadi mitra teknologi penyedia layanan di Indonesia yang memberdayakan UMKM, Profesional, dan Korporasi."
+                </blockquote>
+
+                <p className="mt-4 text-sm text-neutral-400 leading-relaxed">
+                  Kami percaya bahwa teknologi terbaik adalah teknologi yang menyederhanakan masalah, bukan yang menambah kerumitan operasional.
+                </p>
+              </div>
+
+              <div className="mt-8 pt-6 border-t border-neutral-800 flex items-center justify-between text-xs text-neutral-400">
+                <span>Markas Pusat</span>
+                <span className="text-white font-semibold">Surabaya, Jawa Timur</span>
+              </div>
+            </div>
+
+            {/* 3 Misi Cards Column */}
+            <div className="lg:col-span-7 flex flex-col gap-4">
+              <div className="rounded-3xl border border-neutral-200 bg-white p-6 sm:p-7 shadow-xs hover:border-neutral-300 transition-all duration-300">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-neutral-950 text-white font-bold text-sm">
+                    01
                   </div>
                   <div>
-                    <h4 className="font-semibold text-slate-900">Penyediaan Layanan Berstandar Tinggi</h4>
-                    <p className="mt-1 text-sm text-slate-600 leading-relaxed">
-                      Mengembangkan sistem berbasis teknologi modern yang aman, cepat, dan mudah dipelihara sesuai standar rekayasa perangkat lunak internasional.
+                    <h3 className="text-base font-bold text-neutral-950">
+                      Penyediaan Layanan Berstandar Tinggi
+                    </h3>
+                    <p className="mt-1.5 text-sm text-neutral-600 leading-relaxed">
+                      Mengembangkan sistem berbasis teknologi modern yang aman, cepat, dan mudah dipelihara sesuai kaidah rekayasa perangkat lunak internasional.
                     </p>
                   </div>
                 </div>
+              </div>
 
-                <div className="flex gap-4">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-50 font-bold text-blue-700 text-sm">
-                    2
+              <div className="rounded-3xl border border-neutral-200 bg-white p-6 sm:p-7 shadow-xs hover:border-neutral-300 transition-all duration-300">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-neutral-950 text-white font-bold text-sm">
+                    02
                   </div>
                   <div>
-                    <h4 className="font-semibold text-slate-900">Efisiensi Sistem & Proses Kerja</h4>
-                    <p className="mt-1 text-sm text-slate-600 leading-relaxed">
-                      Menghadirkan otomasi dan integrasi data yang memangkas waktu kerja manual, meminimalisir kesalahan, dan menaikkan produktivitas klien.
+                    <h3 className="text-base font-bold text-neutral-950">
+                      Efisiensi Sistem & Proses Kerja
+                    </h3>
+                    <p className="mt-1.5 text-sm text-neutral-600 leading-relaxed">
+                      Menghadirkan otomasi dan integrasi data yang memangkas waktu kerja manual, meminimalisir kesalahan manusia, dan menaikkan profitabilitas.
                     </p>
                   </div>
                 </div>
+              </div>
 
-                <div className="flex gap-4">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-50 font-bold text-blue-700 text-sm">
-                    3
+              <div className="rounded-3xl border border-neutral-200 bg-white p-6 sm:p-7 shadow-xs hover:border-neutral-300 transition-all duration-300">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-neutral-950 text-white font-bold text-sm">
+                    03
                   </div>
                   <div>
-                    <h4 className="font-semibold text-slate-900">Kepuasan Klien Jangka Panjang</h4>
-                    <p className="mt-1 text-sm text-slate-600 leading-relaxed">
-                      Menjaga komunikasi transparan, memberikan pelatihan komprehensif, dan siap sedia memberikan asistensi teknis berkelanjutan pasca rilis.
+                    <h3 className="text-base font-bold text-neutral-950">
+                      Komitmen Kepuasan Klien Jangka Panjang
+                    </h3>
+                    <p className="mt-1.5 text-sm text-neutral-600 leading-relaxed">
+                      Menjaga komunikasi terbuka, memberikan panduan modul lengkap, serta siap sedia memberikan pendampingan teknis berkelanjutan pasca peluncuran.
                     </p>
                   </div>
                 </div>
@@ -669,74 +846,79 @@ export default function Home() {
       </section>
 
       {/* =========================================================================
-          LAYANAN (Services - 8 Layanan Lengkap)
+          LAYANAN KAMI (Services - Refit Clean Grid)
          ========================================================================= */}
-      <section id="layanan" className="border-b border-slate-200 bg-white py-20 lg:py-28">
+      <section id="layanan" className="border-b border-neutral-200/80 bg-white py-20 lg:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <div className="max-w-2xl">
               <span className="text-xs font-bold tracking-widest text-blue-700 uppercase">
                 Layanan Kami
               </span>
-              <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-950 sm:text-4xl">
-                Solusi Perangkat Lunak Terintegrasi
+              <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-neutral-950 sm:text-4xl">
+                Solusi Digital Komprehensif
               </h2>
-              <p className="mt-4 text-base text-slate-600">
-                Pilih dari 8 layanan terarah yang dirancang untuk menjawab kebutuhan digitalisasi bisnis Anda dari tahap rancangan hingga implementasi skala penuh.
+              <p className="mt-3 text-base text-neutral-600">
+                Delapan spesialisasi layanan rekayasa perangkat lunak untuk membawa bisnis Anda melangkah lebih cepat di era digital.
               </p>
             </div>
 
-            {/* Category Filter Tabs */}
-            <div className="mt-6 flex flex-wrap gap-2 md:mt-0">
-              {(["semua", "web", "app", "enterprise"] as ServiceCategory[]).map((cat) => (
+            {/* Category Filter Pills (Refit Filter Pattern) */}
+            <div className="flex flex-wrap items-center gap-2">
+              {[
+                { label: "Semua", val: "semua" },
+                { label: "Website", val: "web" },
+                { label: "Aplikasi & UI/UX", val: "app" },
+                { label: "Enterprise & CRM", val: "enterprise" },
+              ].map((btn) => (
                 <button
-                  key={cat}
-                  onClick={() => setActiveTab(cat)}
-                  className={`rounded-lg px-4 py-2 text-xs font-semibold capitalize transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 ${
-                    activeTab === cat
-                      ? "bg-blue-700 text-white shadow-xs"
-                      : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                  key={btn.val}
+                  onClick={() => setActiveServiceTab(btn.val as ServiceCategory)}
+                  className={`rounded-full px-4 py-2 text-xs font-bold transition-all focus:outline-none ${
+                    activeServiceTab === btn.val
+                      ? "bg-neutral-950 text-white shadow-xs"
+                      : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
                   }`}
                 >
-                  {cat === "semua" ? "Semua Layanan" : cat}
+                  {btn.label}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Service Cards Grid */}
+          {/* Service Cards Grid (8 Services) */}
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {filteredServices.map((svc) => (
               <div
                 key={svc.id}
-                className="group flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-xs transition-all hover:-translate-y-1 hover:border-blue-300 hover:shadow-md"
+                className="group flex flex-col justify-between rounded-3xl border border-neutral-200 bg-white p-6 shadow-xs transition-all duration-300 hover:-translate-y-1.5 hover:border-neutral-400 hover:shadow-framer"
               >
                 <div>
-                  <div className="flex items-center justify-between">
-                    <span className="inline-block rounded-md bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-700">
-                      {svc.badge}
+                  <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
+                    <span className="text-xs font-mono font-bold text-neutral-400">
+                      {svc.num}
                     </span>
-                    <span className="text-xs font-medium text-slate-400 capitalize">
-                      {svc.category}
+                    <span className="rounded-full bg-neutral-100 px-2.5 py-0.5 text-[10px] font-semibold text-neutral-600">
+                      {svc.badge}
                     </span>
                   </div>
 
-                  <h3 className="mt-4 text-lg font-bold text-slate-900 group-hover:text-blue-700 transition-colors">
+                  <h3 className="mt-4 text-lg font-bold text-neutral-950 group-hover:text-blue-700 transition-colors">
                     {svc.title}
                   </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                  <p className="mt-2 text-xs leading-relaxed text-neutral-600">
                     {svc.shortDesc}
                   </p>
 
-                  <div className="mt-4 border-t border-slate-100 pt-3">
-                    <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-                      Fitur Kunci:
-                    </div>
-                    <ul className="mt-2 space-y-1.5 text-xs text-slate-700">
-                      {svc.features.map((f, idx) => (
-                        <li key={idx} className="flex items-center gap-2">
-                          <svg className="h-3.5 w-3.5 text-blue-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  <div className="mt-4 pt-3 border-t border-neutral-100">
+                    <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
+                      Cakupan Fitur
+                    </span>
+                    <ul className="mt-2 space-y-1.5 text-xs text-neutral-700">
+                      {svc.features.map((f, i) => (
+                        <li key={i} className="flex items-center gap-2">
+                          <svg className="h-3.5 w-3.5 text-blue-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
                           </svg>
                           <span>{f}</span>
                         </li>
@@ -745,16 +927,16 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="mt-6 border-t border-slate-100 pt-4">
+                <div className="mt-6 pt-4 border-t border-neutral-100">
                   <a
-                    href={`https://wa.me/6288217139228?text=Halo%20Koneksa%20Indonesia,%20saya%20tertarik%20dengan%20layanan%20${encodeURIComponent(svc.title)}.`}
+                    href={`https://wa.me/6288217139228?text=Halo%20Koneksa%20Indonesia,%20saya%20tertarik%20konsultasi%20layanan%20${encodeURIComponent(svc.title)}.`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 py-2 text-xs font-semibold text-slate-800 transition-colors hover:border-blue-600 hover:bg-blue-600 hover:text-white"
+                    className="flex w-full items-center justify-center gap-1.5 rounded-full border border-neutral-200 bg-neutral-50 py-2 text-xs font-bold text-neutral-800 transition-all group-hover:bg-neutral-950 group-hover:text-white group-hover:border-neutral-950"
                   >
-                    Konsultasi Layanan Ini
-                    <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                    <span>Konsultasi Layanan</span>
+                    <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
                     </svg>
                   </a>
                 </div>
@@ -765,234 +947,67 @@ export default function Home() {
       </section>
 
       {/* =========================================================================
-          KLIEN & TEKNOLOGI (Clients & Tech Stack)
+          PAKET LAYANAN & HARGA (Pricing - Refit Clean Tier Cards)
          ========================================================================= */}
-      <section id="klien" className="border-b border-slate-200 bg-slate-50 py-20 lg:py-28">
+      <section id="harga" className="border-b border-neutral-200/80 bg-neutral-50/70 py-20 lg:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          {/* Client Trust Section */}
-          <div className="mx-auto max-w-3xl text-center">
+          <div className="text-center max-w-2xl mx-auto">
             <span className="text-xs font-bold tracking-widest text-blue-700 uppercase">
-              Kepercayaan Klien
+              Paket Harga Transparan
             </span>
-            <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-950 sm:text-4xl">
-              Telah Dipercaya oleh Berbagai Institusi & Bisnis
+            <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-neutral-950 sm:text-4xl">
+              Pilihan Investasi Digital Tepat Sasaran
             </h2>
-            <p className="mt-4 text-base text-slate-600">
-              Berikut adalah beberapa institusi dan entitas bisnis yang telah mempercayakan kebutuhan sistem dan solusi teknologinya kepada Koneksa Indonesia:
+            <p className="mt-3 text-base text-neutral-600">
+              Rincian fitur transparan tanpa biaya tersembunyi, sudah termasuk hosting 1 tahun dan full source code.
             </p>
           </div>
 
-          <div className="mt-12 grid gap-6 sm:grid-cols-3">
-            {/* SMA N 14 */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-xs transition-all hover:shadow-md">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 text-blue-800 font-extrabold text-xl">
-                14
-              </div>
-              <h3 className="mt-5 text-xl font-bold text-slate-900">SMA N 14</h3>
-              <p className="mt-2 text-xs font-semibold text-blue-700 uppercase tracking-wider">
-                Institusi Pendidikan
-              </p>
-              <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-                Pengembangan sistem informasi dan platform digital pendukung kegiatan operasional serta komunikasi institusi pendidikan.
-              </p>
-            </div>
-
-            {/* ATM Studio */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-xs transition-all hover:shadow-md">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-800 font-extrabold text-xl">
-                ATM
-              </div>
-              <h3 className="mt-5 text-xl font-bold text-slate-900">ATM Studio</h3>
-              <p className="mt-2 text-xs font-semibold text-indigo-700 uppercase tracking-wider">
-                Creative & Digital Studio
-              </p>
-              <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-                Kolaborasi teknologi digital, optimasi website profil kreatif, dan sistem manajemen portfolio interaktif.
-              </p>
-            </div>
-
-            {/* PLN Icon Plus */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-xs transition-all hover:shadow-md">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-sky-50 text-sky-800 font-extrabold text-xl">
-                PLN
-              </div>
-              <h3 className="mt-5 text-xl font-bold text-slate-900">PLN Icon Plus</h3>
-              <p className="mt-2 text-xs font-semibold text-sky-700 uppercase tracking-wider">
-                Telekomunikasi & Energi
-              </p>
-              <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-                Kemitraan solusi teknologi informasi, digitalisasi alur kerja, dan keandalan sistem berstandar korporasi skala nasional.
-              </p>
-            </div>
-          </div>
-
-          {/* Tech Stack Grid */}
-          <div className="mt-24">
-            <div className="mx-auto max-w-3xl text-center">
-              <span className="text-xs font-bold tracking-widest text-slate-500 uppercase">
-                Teknologi yang Dikuasai
-              </span>
-              <h3 className="mt-2 text-2xl font-bold text-slate-950 sm:text-3xl">
-                Tech Stack Modern & Teruji
-              </h3>
-              <p className="mt-2 text-sm text-slate-600">
-                Kami menggunakan bahasa pemrograman, framework, dan perkakas terdepan untuk memastikan performa yang cepat dan aman.
-              </p>
-            </div>
-
-            <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7">
-              {techStack.map((tech) => (
-                <div
-                  key={tech.name}
-                  className="flex flex-col items-center justify-center rounded-xl border border-slate-200 bg-white p-4 text-center transition-all hover:border-blue-400 hover:shadow-xs"
-                >
-                  <span className="font-bold text-slate-900 text-sm">{tech.name}</span>
-                  <span className="mt-1 text-[11px] text-slate-500">{tech.category}</span>
-                  <span className="mt-2 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-600">
-                    {tech.tag}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =========================================================================
-          TIM KAMI (Our Team)
-         ========================================================================= */}
-      <section id="tim" className="border-b border-slate-200 bg-white py-20 lg:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            <span className="text-xs font-bold tracking-widest text-blue-700 uppercase">
-              Struktur Organisasi
-            </span>
-            <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-950 sm:text-4xl">
-              Tim Inti Koneksa Indonesia
-            </h2>
-            <p className="mt-4 text-base text-slate-600">
-              Dipimpin oleh praktisi teknologi yang berkomitmen menghadirkan eksekusi proyek tepat waktu dengan standar profesional tinggi.
-            </p>
-          </div>
-
-          <div className="mt-16 grid gap-8 sm:grid-cols-2 max-w-4xl mx-auto">
-            {/* Wahyu Firmansyah */}
-            <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-8 text-center transition-all hover:border-slate-300 hover:shadow-md">
-              <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-tr from-blue-700 to-indigo-800 text-white font-extrabold text-2xl shadow-md">
-                WF
-              </div>
-              <h3 className="mt-6 text-xl font-bold text-slate-950">Wahyu Firmansyah</h3>
-              <div className="mt-1 inline-block rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-800">
-                Founder
-              </div>
-              <p className="mt-4 text-sm text-slate-600 leading-relaxed">
-                Memimpin visi strategis, kemitraan bisnis, dan arah pengembangan jangka panjang Koneksa Indonesia untuk selalu relevan dengan kebutuhan industri.
-              </p>
-              <div className="mt-6 border-t border-slate-200 pt-4">
-                <a
-                  href="https://wa.me/6281328884628"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700 hover:text-blue-900"
-                >
-                  <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z" />
-                  </svg>
-                  Hubungi Wahyu (+6281328884628)
-                </a>
-              </div>
-            </div>
-
-            {/* Ferdian Bimo Surya Putra, S.Kom. */}
-            <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-8 text-center transition-all hover:border-slate-300 hover:shadow-md">
-              <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-tr from-indigo-700 to-sky-700 text-white font-extrabold text-2xl shadow-md">
-                FB
-              </div>
-              <h3 className="mt-6 text-xl font-bold text-slate-950">Ferdian Bimo Surya Putra, S.Kom.</h3>
-              <div className="mt-1 inline-block rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-800">
-                Full Stack Developer
-              </div>
-              <p className="mt-4 text-sm text-slate-600 leading-relaxed">
-                Bertanggung jawab atas arsitektur perangkat lunak, pengembangan antarmuka, backend API, keamanan data, dan integrasi teknis sistem menyeluruh.
-              </p>
-              <div className="mt-6 border-t border-slate-200 pt-4">
-                <a
-                  href="https://wa.me/6288217139228"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700 hover:text-blue-900"
-                >
-                  <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z" />
-                  </svg>
-                  Hubungi Bimo (+6288217139228)
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =========================================================================
-          PAKET LAYANAN & HARGA (Pricing - 3 Kartu Paket)
-         ========================================================================= */}
-      <section id="harga" className="border-b border-slate-200 bg-slate-50 py-20 lg:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            <span className="text-xs font-bold tracking-widest text-blue-700 uppercase">
-              Paket Layanan
-            </span>
-            <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-950 sm:text-4xl">
-              Investasi Transparan Tanpa Biaya Tersembunyi
-            </h2>
-            <p className="mt-4 text-base text-slate-600">
-              Pilihan paket pembuatan website dan sistem dengan rincian fitur jelas, hosting 1 tahun, dan source code penuh.
-            </p>
-          </div>
-
-          <div className="mt-16 grid gap-8 lg:grid-cols-3 items-stretch">
+          <div className="mt-14 grid gap-8 lg:grid-cols-3 items-stretch max-w-6xl mx-auto">
             {pricingPackages.map((pkg) => (
               <div
                 key={pkg.name}
-                className={`relative flex flex-col justify-between rounded-2xl bg-white p-8 transition-all ${
+                className={`relative flex flex-col justify-between rounded-3xl bg-white p-8 transition-all duration-300 ${
                   pkg.highlight
-                    ? "border-2 border-blue-600 shadow-xl ring-4 ring-blue-100 lg:-translate-y-2"
-                    : "border border-slate-200 shadow-xs hover:border-slate-300 hover:shadow-md"
+                    ? "border-2 border-neutral-950 shadow-framer-hover lg:-translate-y-3"
+                    : "border border-neutral-200 shadow-framer hover:border-neutral-300"
                 }`}
               >
                 {pkg.highlight && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-blue-700 px-4 py-1 text-xs font-bold text-white uppercase tracking-wider shadow-sm">
-                    Paling Direkomendasikan
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-neutral-950 px-4 py-1 text-[11px] font-bold text-white uppercase tracking-wider shadow-sm">
+                    Paling Populer
                   </div>
                 )}
 
                 <div>
                   <div className="flex items-center justify-between">
-                    <h3 className="text-xl font-bold text-slate-950">{pkg.name}</h3>
-                    <span className="text-xs font-semibold text-slate-500">{pkg.idealFor}</span>
+                    <h3 className="text-xl font-bold text-neutral-950">{pkg.name}</h3>
+                    <span className="rounded-full bg-neutral-100 px-3 py-1 text-[11px] font-semibold text-neutral-600">
+                      {pkg.idealFor}
+                    </span>
                   </div>
 
-                  <div className="mt-5">
-                    <span className="text-3xl font-extrabold text-slate-900 sm:text-4xl">
+                  <div className="mt-6 flex items-baseline gap-1">
+                    <span className="text-3xl sm:text-4xl font-extrabold text-neutral-950 tracking-tight">
                       {pkg.price}
                     </span>
-                    <span className="text-xs text-slate-500 ml-1">/ project</span>
+                    <span className="text-xs text-neutral-500 font-medium">/ paket</span>
                   </div>
 
-                  <p className="mt-3 text-sm text-slate-600 leading-relaxed">
+                  <p className="mt-3 text-xs leading-relaxed text-neutral-600">
                     {pkg.description}
                   </p>
 
-                  <div className="mt-6 border-t border-slate-100 pt-6">
-                    <div className="text-xs font-bold text-slate-900 uppercase tracking-wider">
-                      Spesifikasi & Fasilitas Termasuk:
-                    </div>
-                    <ul className="mt-4 space-y-2.5 text-sm text-slate-700">
-                      {pkg.features.map((feat, idx) => (
-                        <li key={idx} className="flex items-start gap-2.5">
+                  <div className="mt-6 pt-6 border-t border-neutral-100">
+                    <span className="text-xs font-bold text-neutral-950 uppercase tracking-wider block mb-4">
+                      Fitur & Spesifikasi:
+                    </span>
+                    <ul className="space-y-2.5 text-xs text-neutral-700">
+                      {pkg.features.map((feat, i) => (
+                        <li key={i} className="flex items-start gap-2.5">
                           <svg
                             className={`h-4 w-4 shrink-0 mt-0.5 ${
-                              pkg.highlight ? "text-blue-600" : "text-emerald-600"
+                              pkg.highlight ? "text-neutral-950" : "text-blue-700"
                             }`}
                             fill="none"
                             stroke="currentColor"
@@ -1007,156 +1022,251 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="mt-8 border-t border-slate-100 pt-6">
+                <div className="mt-8 pt-6 border-t border-neutral-100">
                   <a
-                    href={`https://wa.me/6288217139228?text=${encodeURIComponent(pkg.whatsappText)}`}
+                    href={`https://wa.me/6288217139228?text=${encodeURIComponent(pkg.whatsappMsg)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`inline-flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
+                    className={`flex w-full items-center justify-center gap-2 rounded-full py-3 text-xs font-bold transition-all ${
                       pkg.highlight
-                        ? "bg-blue-700 text-white hover:bg-blue-800 shadow-sm hover:shadow-md focus-visible:ring-blue-600"
-                        : "border border-slate-300 bg-slate-50 text-slate-800 hover:border-slate-400 hover:bg-slate-100 focus-visible:ring-slate-400"
+                        ? "bg-neutral-950 text-white hover:bg-neutral-800 shadow-sm"
+                        : "border border-neutral-300 bg-neutral-50 text-neutral-800 hover:bg-neutral-100"
                     }`}
                   >
                     Pesan {pkg.name}
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                     </svg>
                   </a>
                 </div>
               </div>
             ))}
           </div>
+        </div>
+      </section>
 
-          <div className="mt-12 rounded-xl border border-slate-200 bg-white p-6 text-center text-sm text-slate-600">
-            Butuh spesifikasi khusus di luar paket (misal sistem ERP atau aplikasi mobile terintegrasi)?{" "}
-            <a
-              href="#kontak"
-              className="font-semibold text-blue-700 hover:underline"
-            >
-              Diskusikan penawaran kustom bersama kami
-            </a>
-            .
+      {/* =========================================================================
+          STRUKTUR TIM (Our Team - Refit Minimalist Grid)
+         ========================================================================= */}
+      <section id="tim" className="border-b border-neutral-200/80 bg-white py-20 lg:py-28">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto">
+            <span className="text-xs font-bold tracking-widest text-blue-700 uppercase">
+              Struktur Organisasi
+            </span>
+            <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-neutral-950 sm:text-4xl">
+              Tim Inti Koneksa Indonesia
+            </h2>
+            <p className="mt-3 text-base text-neutral-600">
+              Praktisi teknologi yang berfokus memberikan rekayasa perangkat lunak berkualitas tinggi dengan komunikasi transparan.
+            </p>
+          </div>
+
+          <div className="mt-14 grid gap-8 sm:grid-cols-2 max-w-3xl mx-auto">
+            {/* Wahyu Firmansyah */}
+            <div className="rounded-3xl border border-neutral-200 bg-neutral-50/50 p-8 text-center transition-all duration-300 hover:border-neutral-300 hover:shadow-framer">
+              <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-neutral-950 text-white font-extrabold text-2xl shadow-sm">
+                WF
+              </div>
+              <h3 className="mt-5 text-xl font-bold text-neutral-950">Wahyu Firmansyah</h3>
+              <div className="mt-1 inline-block rounded-full bg-neutral-200 px-3 py-1 text-xs font-bold text-neutral-800">
+                Founder
+              </div>
+              <p className="mt-4 text-xs text-neutral-600 leading-relaxed">
+                Memimpin visi strategis, pengembangan kemitraan bisnis, serta arah ekspansi solusi digital Koneksa Indonesia.
+              </p>
+              <div className="mt-6 pt-4 border-t border-neutral-200">
+                <a
+                  href="https://wa.me/6281328884628"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-neutral-800 hover:text-blue-700"
+                >
+                  Hubungi Wahyu (+6281328884628)
+                </a>
+              </div>
+            </div>
+
+            {/* Ferdian Bimo Surya Putra, S.Kom. */}
+            <div className="rounded-3xl border border-neutral-200 bg-neutral-50/50 p-8 text-center transition-all duration-300 hover:border-neutral-300 hover:shadow-framer">
+              <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-blue-700 text-white font-extrabold text-2xl shadow-sm">
+                FB
+              </div>
+              <h3 className="mt-5 text-xl font-bold text-neutral-950">Ferdian Bimo Surya Putra, S.Kom.</h3>
+              <div className="mt-1 inline-block rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-800">
+                Full Stack Developer
+              </div>
+              <p className="mt-4 text-xs text-neutral-600 leading-relaxed">
+                Memimpin arsitektur kode, integrasi backend API, perancangan antarmuka, keamanan data, dan stabilitas server.
+              </p>
+              <div className="mt-6 pt-4 border-t border-neutral-200">
+                <a
+                  href="https://wa.me/6288217139228"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-neutral-800 hover:text-blue-700"
+                >
+                  Hubungi Bimo (+6288217139228)
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* =========================================================================
-          KONTAK KAMI (Contact Us & Interactive Consultation Form)
+          FAQS (Refit Interactive Accordion Pattern)
          ========================================================================= */}
-      <section id="kontak" className="border-b border-slate-200 bg-white py-20 lg:py-28">
+      <section id="faqs" className="border-b border-neutral-200/80 bg-neutral-50/70 py-20 lg:py-28">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <span className="text-xs font-bold tracking-widest text-blue-700 uppercase">
+              Tanya Jawab
+            </span>
+            <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-neutral-950 sm:text-4xl">
+              Pertanyaan yang Sering Diajukan
+            </h2>
+            <p className="mt-3 text-base text-neutral-600">
+              Temukan jawaban cepat seputar proses pengerjaan, paket, dan kerja sama bersama kami.
+            </p>
+          </div>
+
+          <div className="mt-12 space-y-4">
+            {faqItems.map((item, idx) => {
+              const isOpen = expandedFaq === idx;
+              return (
+                <div
+                  key={idx}
+                  className="rounded-2xl border border-neutral-200 bg-white transition-all overflow-hidden shadow-2xs"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setExpandedFaq(isOpen ? null : idx)}
+                    className="flex w-full items-center justify-between p-5 text-left text-sm sm:text-base font-bold text-neutral-950 focus:outline-none"
+                    aria-expanded={isOpen}
+                  >
+                    <span>{item.q}</span>
+                    <span className="ml-4 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-neutral-600 font-mono text-sm transition-transform duration-200">
+                      {isOpen ? "−" : "+"}
+                    </span>
+                  </button>
+
+                  {isOpen && (
+                    <div className="px-5 pb-5 text-xs sm:text-sm text-neutral-600 leading-relaxed border-t border-neutral-100 pt-3">
+                      {item.a}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================================
+          KONTAK KAMI (Contact & Interactive Form - Refit Two-Column Layout)
+         ========================================================================= */}
+      <section id="kontak" className="border-b border-neutral-200/80 bg-white py-20 lg:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
-            {/* Left Contact Info Column */}
+            {/* Left Contact Information */}
             <div className="lg:col-span-5">
               <span className="text-xs font-bold tracking-widest text-blue-700 uppercase">
-                Kontak & Alamat
+                Kontak & Lokasi
               </span>
-              <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-950 sm:text-4xl">
-                Mari Mulai Diskusikan Solusi Bisnis Anda
+              <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-neutral-950 sm:text-4xl">
+                Mari Diskusikan Ide Proyek Anda
               </h2>
-              <p className="mt-4 text-base leading-relaxed text-slate-600">
-                Hubungi kami untuk konsultasi awal, penawaran harga, atau presentasi teknis. Kami siap menyapa Anda langsung maupun secara daring.
+              <p className="mt-4 text-sm sm:text-base text-neutral-600 leading-relaxed">
+                Kami siap memberikan solusi terbaik sesuai alokasi anggaran dan kebutuhan operasional bisnis Anda. Kunjungi markas kami atau hubungi kami langsung via WhatsApp.
               </p>
 
               <div className="mt-8 space-y-6">
-                {/* Office Address */}
-                <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-700">
-                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
+                {/* Office Address Card */}
+                <div className="rounded-2xl border border-neutral-200 bg-neutral-50/80 p-5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-neutral-950 uppercase tracking-wider">
+                      Kantor Pusat Surabaya
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleCopyAddress}
+                      className="text-xs font-semibold text-blue-700 hover:text-blue-900 focus:outline-none"
+                    >
+                      {copiedAddress ? "Tersalin!" : "Salin Alamat"}
+                    </button>
                   </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-slate-900">Alamat Kantor</h3>
-                    <p className="mt-1 text-sm text-slate-600 leading-relaxed">
-                      Jl. Sidosermo Gg. Damri No.39, Sidosermo, Kec. Wonocolo, Surabaya, Jawa Timur 60239
-                    </p>
-                  </div>
+                  <p className="mt-2 text-xs sm:text-sm text-neutral-700 leading-relaxed font-medium">
+                    Jl. Sidosermo Gg. Damri No.39, Sidosermo, Kec. Wonocolo, Surabaya, Jawa Timur 60239
+                  </p>
                 </div>
 
                 {/* WhatsApp Contacts */}
-                <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
-                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-slate-900">Kontak WhatsApp Resmi</h3>
-                    <div className="mt-1.5 space-y-1 text-sm">
-                      <div>
-                        <a
-                          href="https://wa.me/6288217139228"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="font-medium text-blue-700 hover:underline"
-                        >
-                          +62 882-1713-9228
-                        </a>{" "}
-                        <span className="text-slate-500">(Bimo)</span>
-                      </div>
-                      <div>
-                        <a
-                          href="https://wa.me/6281328884628"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="font-medium text-blue-700 hover:underline"
-                        >
-                          +62 813-2888-4628
-                        </a>{" "}
-                        <span className="text-slate-500">(Wahyu)</span>
-                      </div>
+                <div className="rounded-2xl border border-neutral-200 bg-neutral-50/80 p-5">
+                  <span className="text-xs font-bold text-neutral-950 uppercase tracking-wider block mb-2">
+                    Kontak WhatsApp Resmi
+                  </span>
+                  <div className="space-y-2 text-xs sm:text-sm">
+                    <div className="flex items-center justify-between">
+                      <span className="text-neutral-600">Bimo (Technical)</span>
+                      <a
+                        href="https://wa.me/6288217139228"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-bold text-blue-700 hover:underline"
+                      >
+                        +62 882-1713-9228
+                      </a>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-neutral-600">Wahyu (Partnership)</span>
+                      <a
+                        href="https://wa.me/6281328884628"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-bold text-blue-700 hover:underline"
+                      >
+                        +62 813-2888-4628
+                      </a>
                     </div>
                   </div>
                 </div>
 
-                {/* Email */}
-                <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-sky-100 text-sky-700">
-                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-slate-900">Email Korespondensi</h3>
-                    <p className="mt-1 text-sm">
+                {/* Email & Social */}
+                <div className="rounded-2xl border border-neutral-200 bg-neutral-50/80 p-5">
+                  <span className="text-xs font-bold text-neutral-950 uppercase tracking-wider block mb-2">
+                    Email & Media Sosial
+                  </span>
+                  <div className="space-y-1.5 text-xs sm:text-sm">
+                    <div>
+                      <span className="text-neutral-500 mr-2">Email:</span>
                       <a
                         href="mailto:koneksaindonesia@gmail.com"
-                        className="font-medium text-blue-700 hover:underline"
+                        className="font-bold text-neutral-900 hover:underline"
                       >
                         koneksaindonesia@gmail.com
                       </a>
-                    </p>
-                  </div>
-                </div>
-
-                {/* Social Media Links */}
-                <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-100 text-purple-700">
-                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-slate-900">Media Sosial</h3>
-                    <div className="mt-1 flex flex-wrap gap-4 text-sm">
+                    </div>
+                    <div>
+                      <span className="text-neutral-500 mr-2">Instagram:</span>
                       <a
                         href="https://instagram.com/koneksaindonesia"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-medium text-blue-700 hover:underline"
+                        className="font-bold text-blue-700 hover:underline"
                       >
-                        Instagram: @koneksaindonesia
+                        @koneksaindonesia
                       </a>
+                    </div>
+                    <div>
+                      <span className="text-neutral-500 mr-2">TikTok:</span>
                       <a
                         href="https://tiktok.com/@koneksaindonesia"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-medium text-blue-700 hover:underline"
+                        className="font-bold text-blue-700 hover:underline"
                       >
-                        TikTok: @koneksaindonesia
+                        @koneksaindonesia
                       </a>
                     </div>
                   </div>
@@ -1164,18 +1274,20 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right Interactive Form Column */}
+            {/* Right Consultation Form */}
             <div className="lg:col-span-7">
-              <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-6 sm:p-8 shadow-xs">
-                <h3 className="text-xl font-bold text-slate-950">Formulir Permintaan Konsultasi</h3>
-                <p className="mt-1 text-sm text-slate-600">
-                  Isi data proyek Anda, pesan akan otomatis disiapkan untuk dikirim langsung via WhatsApp.
+              <div className="rounded-3xl border border-neutral-200 bg-white p-7 sm:p-9 shadow-framer">
+                <h3 className="text-2xl font-extrabold tracking-tight text-neutral-950">
+                  Formulir Konsultasi Proyek
+                </h3>
+                <p className="mt-1 text-xs sm:text-sm text-neutral-500">
+                  Sampaikan garis besar kebutuhan Anda. Sistem kami akan menyusun pesan untuk dikirimkan langsung ke WhatsApp resmi kami.
                 </p>
 
-                <form onSubmit={handleConsultationSubmit} className="mt-6 space-y-4">
+                <form onSubmit={handleFormSubmit} className="mt-6 space-y-4">
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 uppercase">
+                      <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700">
                         Nama Lengkap *
                       </label>
                       <input
@@ -1184,11 +1296,11 @@ export default function Home() {
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         placeholder="Contoh: Budi Santoso"
-                        className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-2xs focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                        className="mt-1.5 w-full rounded-full border border-neutral-200 bg-neutral-50/60 px-4 py-2.5 text-sm text-neutral-900 shadow-2xs focus:border-neutral-950 focus:bg-white focus:outline-none"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 uppercase">
+                      <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700">
                         Perusahaan / Usaha
                       </label>
                       <input
@@ -1196,20 +1308,20 @@ export default function Home() {
                         value={formData.company}
                         onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                         placeholder="Contoh: CV Maju Lancar"
-                        className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-2xs focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                        className="mt-1.5 w-full rounded-full border border-neutral-200 bg-neutral-50/60 px-4 py-2.5 text-sm text-neutral-900 shadow-2xs focus:border-neutral-950 focus:bg-white focus:outline-none"
                       />
                     </div>
                   </div>
 
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 uppercase">
-                        Layanan yang Dibutuhkan
+                      <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700">
+                        Pilihan Layanan
                       </label>
                       <select
                         value={formData.service}
                         onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                        className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-2xs focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                        className="mt-1.5 w-full rounded-full border border-neutral-200 bg-neutral-50/60 px-4 py-2.5 text-sm text-neutral-900 shadow-2xs focus:border-neutral-950 focus:bg-white focus:outline-none"
                       >
                         <option value="Website Development">Website Development</option>
                         <option value="Landing Page">Landing Page</option>
@@ -1223,49 +1335,49 @@ export default function Home() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 uppercase">
-                        Pilihan Paket Harga
+                      <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700">
+                        Pilihan Paket
                       </label>
                       <select
                         value={formData.packageChoice}
                         onChange={(e) => setFormData({ ...formData, packageChoice: e.target.value })}
-                        className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-2xs focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                        className="mt-1.5 w-full rounded-full border border-neutral-200 bg-neutral-50/60 px-4 py-2.5 text-sm text-neutral-900 shadow-2xs focus:border-neutral-950 focus:bg-white focus:outline-none"
                       >
                         <option value="Paket Lite (Rp 1.500.000)">Paket Lite (Rp 1.500.000)</option>
                         <option value="Paket Pro (Rp 2.600.000)">Paket Pro (Rp 2.600.000)</option>
                         <option value="Paket Max (Rp 5.000.000)">Paket Max (Rp 5.000.000)</option>
-                        <option value="Paket Custom / Enterprise">Paket Custom / Enterprise</option>
+                        <option value="Kustom Enterprise">Kustom Enterprise</option>
                       </select>
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-700 uppercase">
-                      Ringkasan Kebutuhan / Pesan *
+                    <label className="block text-xs font-bold uppercase tracking-wider text-neutral-700">
+                      Rincian Kebutuhan / Pesan *
                     </label>
                     <textarea
                       required
                       rows={4}
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      placeholder="Jelaskan kebutuhan website atau sistem bisnis Anda secara singkat..."
-                      className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-2xs focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                      placeholder="Jelaskan kebutuhan website, aplikasi, atau sistem bisnis Anda..."
+                      className="mt-1.5 w-full rounded-2xl border border-neutral-200 bg-neutral-50/60 p-4 text-sm text-neutral-900 shadow-2xs focus:border-neutral-950 focus:bg-white focus:outline-none"
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-700 py-3.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-blue-800 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 active:scale-98"
+                    className="flex w-full items-center justify-center gap-2 rounded-full bg-neutral-950 py-3.5 text-sm font-bold text-white shadow-md transition-all hover:bg-neutral-800 active:scale-98"
                   >
-                    <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z" />
+                    <span>Kirim via WhatsApp</span>
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                     </svg>
-                    Kirim Pesan via WhatsApp
                   </button>
 
-                  {formSubmitted && (
-                    <div className="rounded-lg bg-emerald-50 p-3 text-xs text-emerald-800 text-center font-medium">
-                      Pesan Anda telah diteruskan ke WhatsApp resmi Koneksa Indonesia.
+                  {formSent && (
+                    <div className="rounded-xl bg-emerald-50 p-3 text-center text-xs font-semibold text-emerald-800">
+                      Pesan Anda berhasil disusun dan diarahkan ke WhatsApp kami.
                     </div>
                   )}
                 </form>
@@ -1276,15 +1388,15 @@ export default function Home() {
       </section>
 
       {/* =========================================================================
-          FOOTER
+          FOOTER (Refit Style)
          ========================================================================= */}
-      <footer className="border-t border-slate-200 bg-slate-900 text-slate-400">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-12">
+      <footer className="bg-neutral-950 text-neutral-400 py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-12 pb-12 border-b border-neutral-800">
             {/* Brand Column */}
             <div className="lg:col-span-5">
               <div className="flex items-center gap-3">
-                <div className="relative h-10 w-10 overflow-hidden rounded-lg bg-white p-1">
+                <div className="relative h-10 w-10 overflow-hidden rounded-full bg-white p-1">
                   <Image
                     src="/koneksa-logo.jpg"
                     alt="Koneksa Indonesia"
@@ -1293,107 +1405,79 @@ export default function Home() {
                   />
                 </div>
                 <div>
-                  <span className="text-lg font-bold tracking-tight text-white">
+                  <span className="text-base font-extrabold tracking-tight text-white block">
                     KONEKSA INDONESIA
                   </span>
-                  <p className="text-xs text-blue-400 font-medium">Solusi Digital, Mitra Terpercaya.</p>
+                  <span className="text-xs text-blue-400 font-semibold">
+                    Solusi Digital, Mitra Terpercaya.
+                  </span>
                 </div>
               </div>
-              <p className="mt-4 max-w-md text-sm text-slate-400 leading-relaxed">
-                Penyedia solusi digital berpusat di Surabaya yang menyederhanakan kerumitan teknologi untuk UMKM, profesional, dan korporasi di seluruh Indonesia.
+              <p className="mt-4 text-xs sm:text-sm text-neutral-400 leading-relaxed max-w-md">
+                Menyederhanakan kerumitan teknologi bagi UMKM, profesional, dan korporasi di seluruh Indonesia dengan solusi perangkat lunak yang berstandar tinggi.
               </p>
-              <div className="mt-4 text-xs text-slate-400">
+              <div className="mt-4 text-xs text-neutral-400">
                 Alamat: Jl. Sidosermo Gg. Damri No.39, Sidosermo, Kec. Wonocolo, Surabaya, Jawa Timur 60239
               </div>
             </div>
 
-            {/* Quick Links */}
+            {/* Navigasi Links */}
             <div className="lg:col-span-3">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-white">Navigasi Halaman</h4>
-              <ul className="mt-4 space-y-2.5 text-sm">
-                <li>
-                  <a href="#beranda" className="hover:text-white transition-colors">
-                    Beranda
-                  </a>
-                </li>
-                <li>
-                  <a href="#tentang-kami" className="hover:text-white transition-colors">
-                    Tentang Kami
-                  </a>
-                </li>
-                <li>
-                  <a href="#layanan" className="hover:text-white transition-colors">
-                    Layanan Kami
-                  </a>
-                </li>
-                <li>
-                  <a href="#klien" className="hover:text-white transition-colors">
-                    Klien & Portofolio
-                  </a>
-                </li>
-                <li>
-                  <a href="#tim" className="hover:text-white transition-colors">
-                    Struktur Tim
-                  </a>
-                </li>
-                <li>
-                  <a href="#harga" className="hover:text-white transition-colors">
-                    Paket Layanan
-                  </a>
-                </li>
-                <li>
-                  <a href="#kontak" className="hover:text-white transition-colors">
-                    Kontak & Alamat
-                  </a>
-                </li>
+              <span className="text-xs font-bold uppercase tracking-wider text-white block mb-4">
+                Navigasi Cepat
+              </span>
+              <ul className="space-y-2 text-xs sm:text-sm">
+                <li><a href="#beranda" className="hover:text-white transition-colors">Beranda</a></li>
+                <li><a href="#tentang-kami" className="hover:text-white transition-colors">Tentang Kami</a></li>
+                <li><a href="#layanan" className="hover:text-white transition-colors">Layanan</a></li>
+                <li><a href="#klien" className="hover:text-white transition-colors">Klien & Portofolio</a></li>
+                <li><a href="#tim" className="hover:text-white transition-colors">Struktur Tim</a></li>
+                <li><a href="#harga" className="hover:text-white transition-colors">Paket Layanan</a></li>
+                <li><a href="#faqs" className="hover:text-white transition-colors">FAQ</a></li>
               </ul>
             </div>
 
-            {/* Official Website & Contact */}
+            {/* Official Website & Identity */}
             <div className="lg:col-span-4">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-white">Website & Kontak Resmi</h4>
-              <ul className="mt-4 space-y-2.5 text-sm">
+              <span className="text-xs font-bold uppercase tracking-wider text-white block mb-4">
+                Website & Legalitas
+              </span>
+              <ul className="space-y-2.5 text-xs sm:text-sm">
                 <li>
-                  <span className="text-slate-500 block text-xs">Website Resmi:</span>
+                  <span className="text-neutral-400 block text-xs">Website Resmi:</span>
                   <a
                     href="https://www.koneksaindonesia.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-medium text-blue-400 hover:text-blue-300"
+                    className="font-bold text-white hover:text-blue-400 transition-colors"
                   >
                     www.koneksaindonesia.com
                   </a>
                 </li>
                 <li>
-                  <span className="text-slate-500 block text-xs">Email:</span>
-                  <a href="mailto:koneksaindonesia@gmail.com" className="text-slate-300 hover:text-white">
-                    koneksaindonesia@gmail.com
-                  </a>
-                </li>
-                <li>
-                  <span className="text-slate-500 block text-xs">WhatsApp:</span>
-                  <span className="text-slate-300">
+                  <span className="text-neutral-400 block text-xs">WhatsApp:</span>
+                  <span className="text-neutral-300">
                     +62 882-1713-9228 (Bimo) | +62 813-2888-4628 (Wahyu)
                   </span>
                 </li>
                 <li>
-                  <span className="text-slate-500 block text-xs">Media Sosial:</span>
-                  <span className="text-slate-300">
-                    Instagram: @koneksaindonesia | TikTok: @koneksaindonesia
-                  </span>
+                  <span className="text-neutral-400 block text-xs">Email:</span>
+                  <a href="mailto:koneksaindonesia@gmail.com" className="text-neutral-300 hover:text-white">
+                    koneksaindonesia@gmail.com
+                  </a>
                 </li>
               </ul>
             </div>
           </div>
 
-          <div className="mt-12 flex flex-col items-center justify-between border-t border-slate-800 pt-8 sm:flex-row text-xs text-slate-500">
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-neutral-400">
             <div>
               &copy; 2026 Koneksa Indonesia. Seluruh hak cipta dilindungi undang-undang.
             </div>
-            <div className="mt-4 sm:mt-0">
+            <div className="mt-3 sm:mt-0">
               <a
                 href="https://www.koneksaindonesia.com"
-                className="text-slate-400 hover:text-white"
+                className="hover:text-white transition-colors font-medium"
               >
                 www.koneksaindonesia.com
               </a>
@@ -1401,6 +1485,22 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* Floating WhatsApp Quick Consultation Pill (Bottom-Right) */}
+      <div className="fixed bottom-6 right-6 z-40">
+        <a
+          href="https://wa.me/6288217139228?text=Halo%20Koneksa%20Indonesia,%20saya%20ingin%20berkonsultasi%20mengenai%20layanan%20digital."
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group flex items-center gap-2.5 rounded-full bg-neutral-950 pl-3.5 pr-4 py-2.5 text-xs font-bold text-white shadow-2xl border border-neutral-800 transition-all duration-300 hover:scale-105 hover:bg-neutral-900 active:scale-95"
+        >
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="animate-ping-soft absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+          </span>
+          <span>Chat WhatsApp</span>
+        </a>
+      </div>
     </div>
   );
 }
