@@ -313,14 +313,9 @@ export default function Home() {
                 priority
               />
             </div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-sm font-extrabold tracking-tight text-neutral-950">
-                KONEKSA
-              </span>
-              <span className="text-sm font-extrabold tracking-tight text-neutral-950">
-                INDONESIA
-              </span>
-            </div>
+            <span className="text-sm sm:text-base font-extrabold tracking-tight text-neutral-950">
+              KONEKSA
+            </span>
           </a>
 
           {/* Desktop Navigation Links */}
