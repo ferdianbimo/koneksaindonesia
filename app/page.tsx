@@ -443,6 +443,13 @@ export default function Home() {
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 h-96 w-[700px] rounded-full bg-blue-50/70 blur-3xl pointer-events-none animate-pulse-glow" />
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          {/* Header Tag Capsule (Without green dot) */}
+          <div className="flex justify-center">
+            <div className="inline-flex items-center rounded-full border border-neutral-200 bg-neutral-50 px-4 py-1.5 text-xs font-semibold text-neutral-800 shadow-2xs transition-transform hover:scale-102">
+              Koneksa Indonesia : Solusi Digital Berpusat di Surabaya
+            </div>
+          </div>
+
           {/* Grand Main Headline */}
           <div className="mt-8 text-center max-w-4xl mx-auto">
             <h1 className="text-4xl font-extrabold tracking-tight text-neutral-950 sm:text-6xl lg:text-7xl">
