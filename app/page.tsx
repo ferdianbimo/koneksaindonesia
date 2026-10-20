@@ -302,22 +302,22 @@ export default function Home() {
           {/* Logo & Brand Name */}
           <a
             href="#beranda"
-            className="group flex items-center gap-3 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900"
+            className="group flex items-center gap-2.5 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900"
           >
-            <div className="relative h-9 w-9 overflow-hidden rounded-full border border-neutral-200 bg-white shadow-2xs transition-transform duration-300 group-hover:scale-105">
+            <div className="relative h-8 w-8 sm:h-9 sm:w-9 shrink-0 transition-transform duration-300 group-hover:scale-105">
               <Image
                 src="/koneksa-logo.jpg"
                 alt="Logo Koneksa Indonesia"
                 fill
-                className="object-contain p-0.5"
+                className="object-contain mix-blend-multiply"
                 priority
               />
             </div>
-            <div className="flex flex-col">
+            <div className="flex items-center gap-1.5">
               <span className="text-sm font-extrabold tracking-tight text-neutral-950">
                 KONEKSA
               </span>
-              <span className="text-[10px] font-bold tracking-widest text-blue-700 uppercase -mt-0.5">
+              <span className="text-sm font-extrabold tracking-tight text-neutral-950">
                 INDONESIA
               </span>
             </div>
@@ -372,20 +372,12 @@ export default function Home() {
           {/* Right Action: Available Status & Pill Button */}
           <div className="flex items-center gap-2 sm:gap-3">
             <a
-              href="https://wa.me/6288217139228?text=Halo%20Koneksa%20Indonesia,%20saya%20tertarik%20bekerja%20sama."
+              href="https://wa.me/6288217139228?text=Halo%20Koneksa%20Indonesia,%20saya%20ingin%20berkonsultasi%20mengenai%20kebutuhan%20teknologi."
               target="_blank"
               rel="noopener noreferrer"
-              className="group hidden sm:inline-flex items-center gap-2 rounded-full bg-neutral-950 px-4 py-2 text-xs font-semibold text-white transition-all duration-300 hover:bg-neutral-800 hover:shadow-md active:scale-95"
+              className="hidden sm:inline-flex items-center justify-center rounded-full bg-neutral-950 px-5 py-2 text-xs font-semibold text-white transition-all duration-300 hover:bg-neutral-800 hover:shadow-md active:scale-95"
             >
-              <span>Konsultasi Proyek</span>
-              <svg
-                className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
+              Konsultasi Gratis
             </a>
 
             {/* Mobile Hamburger Button */}
@@ -1396,7 +1388,7 @@ export default function Home() {
             {/* Brand Column */}
             <div className="lg:col-span-5">
               <div className="flex items-center gap-3">
-                <div className="relative h-10 w-10 overflow-hidden rounded-full bg-white p-1">
+                <div className="relative h-10 w-10 overflow-hidden rounded-xl bg-white p-1">
                   <Image
                     src="/koneksa-logo.jpg"
                     alt="Koneksa Indonesia"
