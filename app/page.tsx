@@ -645,10 +645,16 @@ export default function Home() {
           {/* 3 Real Client Cards */}
           <div className="mt-10 grid gap-6 sm:grid-cols-3 max-w-5xl mx-auto">
             <div className="rounded-2xl border border-neutral-200 bg-neutral-50/60 p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-neutral-300 hover:shadow-framer">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-neutral-950 text-white font-extrabold text-lg">
-                14
+              <div className="mx-auto flex h-14 w-fit items-center justify-center rounded-2xl bg-white border border-neutral-200/80 px-3.5 shadow-2xs">
+                <Image
+                  src="/sman-14.png"
+                  alt="Logo SMAN 14 Surabaya"
+                  width={48}
+                  height={48}
+                  className="h-10 w-auto object-contain"
+                />
               </div>
-              <h3 className="mt-4 text-lg font-bold text-neutral-950">SMA N 14</h3>
+              <h3 className="mt-4 text-lg font-bold text-neutral-950">SMAN 14 Surabaya</h3>
               <p className="text-xs font-semibold text-blue-700 uppercase tracking-wider mt-1">
                 Institusi Pendidikan
               </p>
