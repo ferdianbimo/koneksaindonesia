@@ -658,8 +658,14 @@ export default function Home() {
             </div>
 
             <div className="rounded-2xl border border-neutral-200 bg-neutral-50/60 p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-neutral-300 hover:shadow-framer">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-neutral-950 text-white font-extrabold text-lg">
-                ATM
+              <div className="mx-auto flex h-14 w-fit items-center justify-center rounded-2xl bg-white border border-neutral-200/80 px-3.5 shadow-2xs">
+                <Image
+                  src="/atm-studio.png"
+                  alt="Logo ATM Studio"
+                  width={110}
+                  height={40}
+                  className="h-8 w-auto object-contain"
+                />
               </div>
               <h3 className="mt-4 text-lg font-bold text-neutral-950">ATM Studio</h3>
               <p className="text-xs font-semibold text-blue-700 uppercase tracking-wider mt-1">
