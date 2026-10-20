@@ -302,7 +302,8 @@ export default function Home() {
           {/* Logo & Brand Name */}
           <a
             href="#beranda"
-            className="group flex items-center gap-2.5 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900"
+            className="group flex items-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900"
+            aria-label="Koneksa Indonesia"
           >
             <div className="relative h-8 w-8 sm:h-9 sm:w-9 shrink-0 transition-transform duration-300 group-hover:scale-105">
               <Image
@@ -313,9 +314,6 @@ export default function Home() {
                 priority
               />
             </div>
-            <span className="text-[13px] sm:text-sm font-semibold tracking-[0.22em] text-neutral-900 uppercase">
-              KONEKSA
-            </span>
           </a>
 
           {/* Desktop Navigation Links */}
@@ -445,17 +443,6 @@ export default function Home() {
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 h-96 w-[700px] rounded-full bg-blue-50/70 blur-3xl pointer-events-none animate-pulse-glow" />
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          {/* Header Tag Capsule */}
-          <div className="flex justify-center">
-            <div className="inline-flex items-center gap-2.5 rounded-full border border-neutral-200 bg-neutral-50 px-4 py-1.5 text-xs font-semibold text-neutral-800 shadow-2xs transition-transform hover:scale-102">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping-soft absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600" />
-              </span>
-              <span>Koneksa Indonesia : Solusi Digital Berpusat di Surabaya</span>
-            </div>
-          </div>
-
           {/* Grand Main Headline */}
           <div className="mt-8 text-center max-w-4xl mx-auto">
             <h1 className="text-4xl font-extrabold tracking-tight text-neutral-950 sm:text-6xl lg:text-7xl">
@@ -1074,12 +1061,12 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Ferdian Bimo Surya Putra, S.Kom. */}
+            {/* Ferdian Bimo S.P, S.Kom. */}
             <div className="rounded-3xl border border-neutral-200 bg-neutral-50/50 p-8 text-center transition-all duration-300 hover:border-neutral-300 hover:shadow-framer">
               <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-blue-700 text-white font-extrabold text-2xl shadow-sm">
                 FB
               </div>
-              <h3 className="mt-5 text-xl font-bold text-neutral-950">Ferdian Bimo Surya Putra, S.Kom.</h3>
+              <h3 className="mt-5 text-xl font-bold text-neutral-950">Ferdian Bimo S.P, S.Kom.</h3>
               <div className="mt-1 inline-block rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-800">
                 Full Stack Developer
               </div>
@@ -1484,21 +1471,9 @@ export default function Home() {
           href="https://wa.me/6288217139228?text=Halo%20Koneksa%20Indonesia,%20saya%20ingin%20berkonsultasi%20mengenai%20layanan%20digital."
           target="_blank"
           rel="noopener noreferrer"
-          className="group flex items-center gap-2.5 rounded-full bg-neutral-950 pl-3.5 pr-4 py-2.5 text-xs font-bold text-white shadow-2xl border border-neutral-800 transition-all duration-300 hover:scale-105 hover:bg-neutral-900 active:scale-95"
+          className="flex items-center justify-center rounded-full bg-neutral-950 px-5 py-2.5 text-xs font-bold text-white shadow-2xl border border-neutral-800 transition-all duration-300 hover:scale-105 hover:bg-neutral-900 active:scale-95"
         >
-          <div className="relative h-4 w-4 shrink-0 transition-transform duration-300 group-hover:scale-110">
-            <Image
-              src="/whatsapp-icon-white.png"
-              alt="Icon WhatsApp"
-              fill
-              className="object-contain"
-            />
-          </div>
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping-soft absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-          </span>
-          <span>Chat WhatsApp</span>
+          Chat WhatsApp
         </a>
       </div>
     </div>
