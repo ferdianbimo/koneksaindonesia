@@ -313,7 +313,7 @@ export default function Home() {
                 priority
               />
             </div>
-            <span className="text-sm sm:text-base font-extrabold tracking-tight text-neutral-950">
+            <span className="text-[13px] sm:text-sm font-semibold tracking-[0.22em] text-neutral-900 uppercase">
               KONEKSA
             </span>
           </a>
