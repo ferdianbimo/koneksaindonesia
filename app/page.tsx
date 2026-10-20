@@ -1356,10 +1356,15 @@ export default function Home() {
                     type="submit"
                     className="flex w-full items-center justify-center gap-2 rounded-full bg-neutral-950 py-3.5 text-sm font-bold text-white shadow-md transition-all hover:bg-neutral-800 active:scale-98"
                   >
+                    <div className="relative h-4 w-4 shrink-0">
+                      <Image
+                        src="/whatsapp-icon-white.png"
+                        alt="WhatsApp"
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
                     <span>Kirim via WhatsApp</span>
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </svg>
                   </button>
 
                   {formSent && (
@@ -1481,9 +1486,17 @@ export default function Home() {
           rel="noopener noreferrer"
           className="group flex items-center gap-2.5 rounded-full bg-neutral-950 pl-3.5 pr-4 py-2.5 text-xs font-bold text-white shadow-2xl border border-neutral-800 transition-all duration-300 hover:scale-105 hover:bg-neutral-900 active:scale-95"
         >
-          <span className="relative flex h-2.5 w-2.5">
+          <div className="relative h-4 w-4 shrink-0 transition-transform duration-300 group-hover:scale-110">
+            <Image
+              src="/whatsapp-icon-white.png"
+              alt="Icon WhatsApp"
+              fill
+              className="object-contain"
+            />
+          </div>
+          <span className="relative flex h-2 w-2">
             <span className="animate-ping-soft absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
           </span>
           <span>Chat WhatsApp</span>
         </a>
