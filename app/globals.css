@@ -41,6 +41,37 @@ body {
   }
 }
 
+@keyframes handsFloat {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translateY(-12px) rotate(0.8deg) scale(1.02);
+  }
+}
+
+@keyframes prismShift {
+  0%, 100% {
+    transform: scale(1) translateY(0px);
+    opacity: 0.25;
+  }
+  50% {
+    transform: scale(1.04) translateY(-8px);
+    opacity: 0.4;
+  }
+}
+
+@keyframes ambientPulse {
+  0%, 100% {
+    opacity: 0.15;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(1.05);
+  }
+}
+
 @keyframes marqueeLeft {
   0% {
     transform: translateX(0%);
@@ -80,6 +111,18 @@ body {
 
 .animate-float-slow {
   animation: floatSlow 5s ease-in-out infinite;
+}
+
+.animate-hands-float {
+  animation: handsFloat 7s ease-in-out infinite;
+}
+
+.animate-prism-shift {
+  animation: prismShift 9s ease-in-out infinite;
+}
+
+.animate-ambient-pulse {
+  animation: ambientPulse 8s ease-in-out infinite;
 }
 
 .animate-marquee-left {

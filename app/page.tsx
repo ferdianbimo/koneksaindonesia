@@ -442,7 +442,30 @@ export default function Home() {
         <div className="absolute inset-0 bg-grid-subtle opacity-70 pointer-events-none" />
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 h-96 w-[700px] rounded-full bg-blue-50/70 blur-3xl pointer-events-none animate-pulse-glow" />
 
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Animated Background Art: Halftone Hands Connection ("Koneksa - Mitra Terpercaya") */}
+        <div className="absolute top-16 sm:top-24 left-1/2 -translate-x-1/2 w-full max-w-4xl px-4 pointer-events-none select-none z-0">
+          <div className="relative w-full aspect-[2/1] max-h-[380px] mx-auto mix-blend-multiply opacity-25 sm:opacity-35 transition-opacity duration-700 animate-hands-float">
+            <Image
+              src="/hands-connection.png"
+              alt="Koneksa Partnership Connection"
+              fill
+              className="object-contain"
+              priority
+            />
+          </div>
+        </div>
+
+        {/* Subtle Ambient Accent: Iridescent Concrete Prism Block */}
+        <div className="absolute -top-12 -right-24 sm:-right-12 w-72 sm:w-96 aspect-square pointer-events-none select-none opacity-20 sm:opacity-25 rounded-3xl overflow-hidden blur-[1px] animate-prism-shift hidden md:block">
+          <Image
+            src="/concrete-prism.png"
+            alt="Refit Geometric Prism Accent"
+            fill
+            className="object-cover mix-blend-multiply scale-110"
+          />
+        </div>
+
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* Header Tag Capsule (Without green dot) */}
           <div className="flex justify-center">
             <div className="inline-flex items-center rounded-full border border-neutral-200 bg-neutral-50 px-4 py-1.5 text-xs font-semibold text-neutral-800 shadow-2xs transition-transform hover:scale-102">
@@ -530,6 +553,17 @@ export default function Home() {
               {/* Showcase Interior View */}
               <div className="mt-4 rounded-2xl bg-neutral-900 p-6 sm:p-8 text-white relative overflow-hidden">
                 <div className="absolute top-0 right-0 h-80 w-80 rounded-full bg-blue-600/15 blur-3xl pointer-events-none" />
+
+                {/* Iridescent Concrete Prism Architectural Background */}
+                <div className="absolute inset-0 pointer-events-none select-none opacity-25 mix-blend-screen overflow-hidden">
+                  <Image
+                    src="/concrete-prism.png"
+                    alt="Koneksa Architectural Engine Background"
+                    fill
+                    className="object-cover scale-105 animate-prism-shift"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-neutral-950 via-neutral-950/80 to-neutral-950/40" />
+                </div>
 
                 <div className="relative z-10 grid gap-6 md:grid-cols-12 items-center">
                   <div className="md:col-span-7">
@@ -770,23 +804,36 @@ export default function Home() {
             <div className="lg:col-span-5 rounded-3xl border border-neutral-200 bg-neutral-950 p-8 sm:p-10 text-white flex flex-col justify-between shadow-framer relative overflow-hidden">
               <div className="absolute top-0 right-0 h-48 w-48 rounded-full bg-blue-600/20 blur-2xl" />
 
-              <div>
-                <span className="inline-block rounded-full bg-neutral-800 px-3 py-1 text-xs font-semibold text-neutral-300">
-                  Visi Perusahaan
-                </span>
-
-                <blockquote className="mt-6 text-xl sm:text-2xl font-bold leading-snug">
-                  "Menjadi mitra teknologi penyedia layanan di Indonesia yang memberdayakan UMKM, Profesional, dan Korporasi."
-                </blockquote>
-
-                <p className="mt-4 text-sm text-neutral-400 leading-relaxed">
-                  Kami percaya bahwa teknologi terbaik adalah teknologi yang menyederhanakan masalah, bukan yang menambah kerumitan operasional.
-                </p>
+              {/* Animated Prismatic Texture Backdrop */}
+              <div className="absolute inset-0 pointer-events-none select-none opacity-20 mix-blend-screen overflow-hidden">
+                <Image
+                  src="/concrete-prism.png"
+                  alt="Visi Foundation Prism"
+                  fill
+                  className="object-cover scale-110 animate-prism-shift"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/70 to-neutral-950/40" />
               </div>
 
-              <div className="mt-8 pt-6 border-t border-neutral-800 flex items-center justify-between text-xs text-neutral-400">
-                <span>Markas Pusat</span>
-                <span className="text-white font-semibold">Surabaya, Jawa Timur</span>
+              <div className="relative z-10 flex flex-col justify-between h-full">
+                <div>
+                  <span className="inline-block rounded-full bg-neutral-800 px-3 py-1 text-xs font-semibold text-neutral-300">
+                    Visi Perusahaan
+                  </span>
+
+                  <blockquote className="mt-6 text-xl sm:text-2xl font-bold leading-snug">
+                    "Menjadi mitra teknologi penyedia layanan di Indonesia yang memberdayakan UMKM, Profesional, dan Korporasi."
+                  </blockquote>
+
+                  <p className="mt-4 text-sm text-neutral-400 leading-relaxed">
+                    Kami percaya bahwa teknologi terbaik adalah teknologi yang menyederhanakan masalah, bukan yang menambah kerumitan operasional.
+                  </p>
+                </div>
+
+                <div className="mt-8 pt-6 border-t border-neutral-800 flex items-center justify-between text-xs text-neutral-400">
+                  <span>Markas Pusat</span>
+                  <span className="text-white font-semibold">Surabaya, Jawa Timur</span>
+                </div>
               </div>
             </div>
 
@@ -1165,8 +1212,31 @@ export default function Home() {
       {/* =========================================================================
           KONTAK KAMI (Contact & Interactive Form - Refit Two-Column Layout)
          ========================================================================= */}
-      <section id="kontak" className="border-b border-neutral-200/80 bg-white py-20 lg:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section id="kontak" className="relative overflow-hidden border-b border-neutral-200/80 bg-white py-20 lg:py-28">
+        {/* Subtle grid pattern background */}
+        <div className="absolute inset-0 bg-grid-subtle opacity-50 pointer-events-none" />
+
+        {/* Animated Halftone Hands in Background of Contact Section */}
+        <div className="absolute -bottom-10 -right-20 w-[420px] max-w-full aspect-[2/1] pointer-events-none select-none opacity-20 mix-blend-multiply animate-hands-float hidden lg:block">
+          <Image
+            src="/hands-connection.png"
+            alt="Koneksa Mitra Terpercaya"
+            fill
+            className="object-contain"
+          />
+        </div>
+
+        {/* Subtle Prismatic Corner Accent */}
+        <div className="absolute -top-16 -left-16 w-64 h-64 rounded-3xl overflow-hidden pointer-events-none select-none opacity-15 mix-blend-multiply blur-xs animate-prism-shift hidden md:block">
+          <Image
+            src="/concrete-prism.png"
+            alt="Prism Texture"
+            fill
+            className="object-cover"
+          />
+        </div>
+
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
             {/* Left Contact Information */}
             <div className="lg:col-span-5">
