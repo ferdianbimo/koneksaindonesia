@@ -81,6 +81,74 @@ export default function Home() {
     setFormSent(true);
   };
 
+  // Hero Interactive Slideshow (Refit Framer Style with Large Visuals)
+  const heroSlides = [
+    {
+      id: 0,
+      tabTitle: "Slide 1: Kemitraan Digital",
+      badge: "Solusi Terintegrasi & Kemitraan",
+      title: "Solusi Digital, Mitra Terpercaya",
+      desc: "Menyatukan kerumitan teknologi dengan kebutuhan operasional bisnis Anda melalui rekayasa sistem ERP terpadu, cloud database, dan integrasi workflow.",
+      bgType: "hands" as const,
+      imageSrc: "/hands-connection.png",
+      imageAlt: "Koneksa Hands Connection",
+      statLabel: "Status Sistem",
+      statValue: "Online 100%",
+      specLabel: "Kemitraan",
+      specValue: "Mitra Terpercaya",
+      btnText: "Mulai Proyek",
+      btnLink: "#kontak",
+    },
+    {
+      id: 1,
+      tabTitle: "Slide 2: Arsitektur Web (Prism)",
+      badge: "High-Performance Modern Web",
+      title: "Website Responsif & Berkecepatan Tinggi",
+      desc: "Dibangun dengan fondasi teknologi Next.js, React, dan TypeScript berstandar internasional untuk performa ultra-cepat, indeks SEO maksimal, dan keamanan teruji.",
+      bgType: "prism" as const,
+      imageSrc: "/concrete-prism.png",
+      imageAlt: "Koneksa Concrete Prism Architecture",
+      statLabel: "Performa Web",
+      statValue: "Score 100/100",
+      specLabel: "Teknologi",
+      specValue: "Next.js 16 + React",
+      btnText: "Konsultasi Website",
+      btnLink: "#kontak",
+    },
+    {
+      id: 2,
+      tabTitle: "Slide 3: Mobile & UI/UX",
+      badge: "Native & Cross-Platform Experience",
+      title: "Aplikasi Mobile & UI/UX Intuitif",
+      desc: "Desain antarmuka eksklusif di Figma yang dieksekusi menjadi aplikasi smartphone berdaya tahan tinggi, transisi mulus, dan kemudahan navigasi bagi pengguna.",
+      bgType: "hands" as const,
+      imageSrc: "/hands-connection.png",
+      imageAlt: "Mobile & UI/UX Design",
+      statLabel: "User Experience",
+      statValue: "Desain Eksklusif",
+      specLabel: "Platform",
+      specValue: "iOS & Android",
+      btnText: "Diskusi Desain",
+      btnLink: "#kontak",
+    },
+    {
+      id: 3,
+      tabTitle: "Slide 4: CRM & Automasi",
+      badge: "Customer Pipeline Engine",
+      title: "CRM untuk Manajemen Penjualan Terukur",
+      desc: "Pantau prospek pelanggan, riwayat transaksi, serta otomatisasi pesan follow-up WhatsApp langsung untuk melipatgandakan konversi penjualan bisnis Anda.",
+      bgType: "prism" as const,
+      imageSrc: "/concrete-prism.png",
+      imageAlt: "CRM Engine Concrete Prism",
+      statLabel: "Automasi",
+      statValue: "Pesan Terintegrasi",
+      specLabel: "Efisiensi",
+      specValue: "Hingga 3x Lipat",
+      btnText: "Setup CRM",
+      btnLink: "#kontak",
+    },
+  ];
+
   // 8 Official Services
   const services: ServiceItem[] = [
     {
@@ -442,9 +510,9 @@ export default function Home() {
         <div className="absolute inset-0 bg-grid-subtle opacity-70 pointer-events-none" />
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 h-96 w-[700px] rounded-full bg-blue-50/70 blur-3xl pointer-events-none animate-pulse-glow" />
 
-        {/* Animated Background Art: Halftone Hands Connection ("Koneksa - Mitra Terpercaya") */}
-        <div className="absolute top-16 sm:top-24 left-1/2 -translate-x-1/2 w-full max-w-4xl px-4 pointer-events-none select-none z-0">
-          <div className="relative w-full aspect-[2/1] max-h-[380px] mx-auto mix-blend-multiply opacity-25 sm:opacity-35 transition-opacity duration-700 animate-hands-float">
+        {/* Animated Background Art: Halftone Hands Connection ("Koneksa - Mitra Terpercaya") - Enlarge Nearly Full */}
+        <div className="absolute top-8 sm:top-14 left-1/2 -translate-x-1/2 w-full max-w-6xl lg:max-w-7xl px-2 sm:px-4 pointer-events-none select-none z-0">
+          <div className="relative w-full aspect-[2/1] max-h-[520px] sm:max-h-[640px] mx-auto mix-blend-multiply opacity-35 sm:opacity-50 transition-opacity duration-700 animate-hands-float">
             <Image
               src="/hands-connection.png"
               alt="Koneksa Partnership Connection"
@@ -455,8 +523,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Subtle Ambient Accent: Iridescent Concrete Prism Block */}
-        <div className="absolute -top-12 -right-24 sm:-right-12 w-72 sm:w-96 aspect-square pointer-events-none select-none opacity-20 sm:opacity-25 rounded-3xl overflow-hidden blur-[1px] animate-prism-shift hidden md:block">
+        {/* Subtle Ambient Accent: Iridescent Concrete Prism Block - Enlarge Corner */}
+        <div className="absolute -top-16 -right-20 sm:-right-8 w-80 sm:w-[460px] lg:w-[540px] aspect-square pointer-events-none select-none opacity-25 sm:opacity-35 rounded-3xl overflow-hidden blur-[1px] animate-prism-shift hidden md:block">
           <Image
             src="/concrete-prism.png"
             alt="Refit Geometric Prism Accent"
@@ -529,110 +597,145 @@ export default function Home() {
 
                 {/* Interactive Feature Tabs */}
                 <div className="flex flex-wrap items-center gap-1.5">
-                  {[
-                    "ERP & Cloud",
-                    "Custom Website",
-                    "Mobile & UI/UX",
-                    "CRM & Automasi",
-                  ].map((tab, idx) => (
+                  {heroSlides.map((slide, idx) => (
                     <button
-                      key={tab}
+                      key={slide.id}
                       onClick={() => setActiveHeroTab(idx)}
-                      className={`rounded-full px-3 py-1 text-xs font-semibold transition-all ${
+                      className={`rounded-full px-3.5 py-1 text-xs font-semibold transition-all ${
                         activeHeroTab === idx
                           ? "bg-neutral-950 text-white shadow-xs"
                           : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
                       }`}
                     >
-                      {tab}
+                      {slide.tabTitle}
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Showcase Interior View */}
-              <div className="mt-4 rounded-2xl bg-neutral-900 p-6 sm:p-8 text-white relative overflow-hidden">
-                <div className="absolute top-0 right-0 h-80 w-80 rounded-full bg-blue-600/15 blur-3xl pointer-events-none" />
-
-                {/* Iridescent Concrete Prism Architectural Background */}
-                <div className="absolute inset-0 pointer-events-none select-none opacity-25 mix-blend-screen overflow-hidden">
-                  <Image
-                    src="/concrete-prism.png"
-                    alt="Koneksa Architectural Engine Background"
-                    fill
-                    className="object-cover scale-105 animate-prism-shift"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-neutral-950 via-neutral-950/80 to-neutral-950/40" />
+              {/* Showcase Interior View (Slideshow with Images Enlarged Nearly Full) */}
+              <div className="relative mt-4 min-h-[460px] sm:min-h-[520px] lg:min-h-[560px] rounded-2xl overflow-hidden bg-neutral-950 flex flex-col justify-end p-5 sm:p-8 lg:p-10 text-white group">
+                {/* Full-bleed Animated Background Image for Current Slide */}
+                <div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
+                  {heroSlides[activeHeroTab].bgType === "hands" ? (
+                    <div className="relative w-full h-full flex items-center justify-center p-2 sm:p-6">
+                      <Image
+                        key={`hands-${activeHeroTab}`}
+                        src={heroSlides[activeHeroTab].imageSrc}
+                        alt={heroSlides[activeHeroTab].imageAlt}
+                        fill
+                        className="object-contain scale-105 sm:scale-115 opacity-85 sm:opacity-95 mix-blend-lighten animate-hands-float transition-all duration-700"
+                        priority
+                      />
+                      {/* Vignette Gradient for readability */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/45 to-transparent" />
+                    </div>
+                  ) : (
+                    <div className="relative w-full h-full">
+                      <Image
+                        key={`prism-${activeHeroTab}`}
+                        src={heroSlides[activeHeroTab].imageSrc}
+                        alt={heroSlides[activeHeroTab].imageAlt}
+                        fill
+                        className="object-cover scale-105 sm:scale-110 opacity-85 sm:opacity-95 animate-prism-shift transition-all duration-700"
+                        priority
+                      />
+                      {/* Prismatic Gradient Overlays */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/60 to-neutral-950/20" />
+                      <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/80 via-neutral-950/40 to-transparent" />
+                    </div>
+                  )}
                 </div>
 
-                <div className="relative z-10 grid gap-6 md:grid-cols-12 items-center">
-                  <div className="md:col-span-7">
-                    <span className="inline-block rounded-full bg-blue-500/20 px-3 py-1 text-xs font-semibold text-blue-300">
-                      {activeHeroTab === 0 && "Sistem Terintegrasi Perusahaan"}
-                      {activeHeroTab === 1 && "High-Performance Modern Web"}
-                      {activeHeroTab === 2 && "Native & Cross-Platform Experience"}
-                      {activeHeroTab === 3 && "Customer Pipeline Engine"}
+                {/* Prev / Next Slide Arrow Controls */}
+                <button
+                  type="button"
+                  onClick={() => setActiveHeroTab((prev) => (prev > 0 ? prev - 1 : heroSlides.length - 1))}
+                  className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-white/20 bg-neutral-950/70 text-white backdrop-blur-md transition-all hover:bg-neutral-900 hover:scale-105 active:scale-95 shadow-xl"
+                  aria-label="Slide Sebelumnya"
+                >
+                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveHeroTab((prev) => (prev < heroSlides.length - 1 ? prev + 1 : 0))}
+                  className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-white/20 bg-neutral-950/70 text-white backdrop-blur-md transition-all hover:bg-neutral-900 hover:scale-105 active:scale-95 shadow-xl"
+                  aria-label="Slide Selanjutnya"
+                >
+                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+
+                {/* Foreground Glass Information Card */}
+                <div className="relative z-10 grid gap-6 md:grid-cols-12 items-end">
+                  <div className="md:col-span-8 rounded-2xl border border-white/10 bg-neutral-950/80 p-5 sm:p-7 backdrop-blur-md shadow-2xl">
+                    <span className="inline-block rounded-full bg-blue-500/20 border border-blue-400/30 px-3.5 py-1 text-xs font-semibold text-blue-300">
+                      {heroSlides[activeHeroTab].badge}
                     </span>
-
-                    <h3 className="mt-3 text-2xl sm:text-3xl font-extrabold tracking-tight">
-                      {activeHeroTab === 0 && "ERP System untuk Otomasi Bisnis Menyeluruh"}
-                      {activeHeroTab === 1 && "Website Responsif & Berkecepatan Tinggi"}
-                      {activeHeroTab === 2 && "Aplikasi Mobile & UI/UX Berkelas"}
-                      {activeHeroTab === 3 && "CRM untuk Manajemen Penjualan Terukur"}
+                    <h3 className="mt-3 text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+                      {heroSlides[activeHeroTab].title}
                     </h3>
-
-                    <p className="mt-3 text-sm text-neutral-300 leading-relaxed">
-                      {activeHeroTab === 0 &&
-                        "Menyatukan inventaris gudang, modul akuntansi, pesanan penjualan, dan laporan performa dalam satu dashboard aman dan cepat."}
-                      {activeHeroTab === 1 &&
-                        "Dibangun dengan teknologi Next.js, React, dan TypeScript untuk menjamin indeks SEO Google optimal dan waktu muat instan."}
-                      {activeHeroTab === 2 &&
-                        "Desain antarmuka intuitif di Figma yang dieksekusi menjadi aplikasi smartphone berdaya tahan tinggi dan mudah digunakan."}
-                      {activeHeroTab === 3 &&
-                        "Pantau leads, riwayat interaksi pelanggan, serta integrasi pesan follow-up otomatis untuk melipatgandakan konversi bisnis."}
+                    <p className="mt-2.5 text-xs sm:text-sm text-neutral-300 leading-relaxed max-w-2xl">
+                      {heroSlides[activeHeroTab].desc}
                     </p>
 
-                    <div className="mt-6 flex flex-wrap items-center gap-3">
+                    <div className="mt-5 flex flex-wrap items-center gap-3">
                       <a
-                        href="#kontak"
-                        className="rounded-full bg-white px-5 py-2 text-xs font-bold text-neutral-950 transition-colors hover:bg-neutral-200"
+                        href={heroSlides[activeHeroTab].btnLink}
+                        className="rounded-full bg-white px-6 py-2.5 text-xs font-bold text-neutral-950 transition-all hover:bg-neutral-200 active:scale-98 shadow-md"
                       >
-                        Mulai Proyek
+                        {heroSlides[activeHeroTab].btnText}
                       </a>
                       <a
                         href="#layanan"
-                        className="rounded-full border border-neutral-700 px-5 py-2 text-xs font-semibold text-neutral-300 transition-colors hover:bg-neutral-800"
+                        className="rounded-full border border-white/20 bg-white/5 px-6 py-2.5 text-xs font-semibold text-white transition-all hover:bg-white/10"
                       >
                         Pelajari Detail
                       </a>
                     </div>
                   </div>
 
-                  {/* Architecture Mini Mockup */}
-                  <div className="md:col-span-5">
-                    <div className="rounded-xl border border-neutral-800 bg-neutral-950/80 p-4 space-y-3 font-mono text-xs">
+                  {/* Architecture & Live Metric Card */}
+                  <div className="md:col-span-4 flex flex-col gap-2">
+                    <div className="rounded-2xl border border-white/10 bg-neutral-950/80 p-4 backdrop-blur-md font-mono text-xs shadow-xl space-y-2.5">
                       <div className="flex items-center justify-between text-neutral-400">
-                        <span>Status Sistem</span>
+                        <span>{heroSlides[activeHeroTab].statLabel}</span>
                         <span className="text-emerald-400 font-bold flex items-center gap-1.5">
-                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                          Online 100%
+                          <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                          {heroSlides[activeHeroTab].statValue}
                         </span>
                       </div>
-                      <div className="border-t border-neutral-800 pt-2 flex items-center justify-between text-neutral-400">
-                        <span>Basis Kode</span>
-                        <span className="text-white">Clean Code & Type Safe</span>
+                      <div className="border-t border-white/10 pt-2 flex items-center justify-between text-neutral-400">
+                        <span>{heroSlides[activeHeroTab].specLabel}</span>
+                        <span className="text-white font-semibold">{heroSlides[activeHeroTab].specValue}</span>
                       </div>
-                      <div className="border-t border-neutral-800 pt-2 flex items-center justify-between text-neutral-400">
-                        <span>Hak Cipta</span>
-                        <span className="text-blue-400">100% Milik Klien</span>
-                      </div>
-                      <div className="border-t border-neutral-800 pt-2 flex items-center justify-between text-neutral-400">
-                        <span>Markas</span>
-                        <span className="text-white">Surabaya, Indonesia</span>
+                      <div className="border-t border-white/10 pt-2 flex items-center justify-between text-neutral-400">
+                        <span>Markas Pusat</span>
+                        <span className="text-white">Surabaya</span>
                       </div>
                     </div>
                   </div>
                 </div>
+              </div>
+
+              {/* Bottom Slide Indicators */}
+              <div className="mt-3 flex items-center justify-center gap-2">
+                {heroSlides.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setActiveHeroTab(idx)}
+                    className={`h-2 transition-all rounded-full ${
+                      activeHeroTab === idx
+                        ? "w-8 bg-neutral-950"
+                        : "w-2 bg-neutral-300 hover:bg-neutral-400"
+                    }`}
+                    aria-label={`Pindah ke Slide ${idx + 1}`}
+                  />
+                ))}
               </div>
 
               {/* 4 Bottom Metric Counter Pills (Refit Style) */}
