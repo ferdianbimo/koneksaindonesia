@@ -22,7 +22,6 @@ export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeServiceTab, setActiveServiceTab] = useState<ServiceCategory>("semua");
-  const [activeHeroTab, setActiveHeroTab] = useState<number>(0);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(0);
   const [copiedAddress, setCopiedAddress] = useState(false);
 
@@ -80,74 +79,6 @@ export default function Home() {
     window.open(`https://wa.me/6288217139228?text=${encoded}`, "_blank");
     setFormSent(true);
   };
-
-  // Hero Interactive Slideshow (Refit Framer Style with Large Visuals)
-  const heroSlides = [
-    {
-      id: 0,
-      tabTitle: "Slide 1: Kemitraan Digital",
-      badge: "Solusi Terintegrasi & Kemitraan",
-      title: "Solusi Digital, Mitra Terpercaya",
-      desc: "Menyatukan kerumitan teknologi dengan kebutuhan operasional bisnis Anda melalui rekayasa sistem ERP terpadu, cloud database, dan integrasi workflow.",
-      bgType: "hands" as const,
-      imageSrc: "/hands-connection.png",
-      imageAlt: "Koneksa Hands Connection",
-      statLabel: "Status Sistem",
-      statValue: "Online 100%",
-      specLabel: "Kemitraan",
-      specValue: "Mitra Terpercaya",
-      btnText: "Mulai Proyek",
-      btnLink: "#kontak",
-    },
-    {
-      id: 1,
-      tabTitle: "Slide 2: Arsitektur Web",
-      badge: "High-Performance Modern Web",
-      title: "Website Responsif & Berkecepatan Tinggi",
-      desc: "Dibangun dengan fondasi teknologi Next.js, React, dan TypeScript berstandar internasional untuk performa ultra-cepat, indeks SEO maksimal, dan keamanan teruji.",
-      bgType: "none" as const,
-      imageSrc: null,
-      imageAlt: "",
-      statLabel: "Performa Web",
-      statValue: "Score 100/100",
-      specLabel: "Teknologi",
-      specValue: "Next.js 16 + React",
-      btnText: "Konsultasi Website",
-      btnLink: "#kontak",
-    },
-    {
-      id: 2,
-      tabTitle: "Slide 3: Mobile & UI/UX",
-      badge: "Native & Cross-Platform Experience",
-      title: "Aplikasi Mobile & UI/UX Intuitif",
-      desc: "Desain antarmuka eksklusif di Figma yang dieksekusi menjadi aplikasi smartphone berdaya tahan tinggi, transisi mulus, dan kemudahan navigasi bagi pengguna.",
-      bgType: "hands" as const,
-      imageSrc: "/hands-connection.png",
-      imageAlt: "Mobile & UI/UX Design",
-      statLabel: "User Experience",
-      statValue: "Desain Eksklusif",
-      specLabel: "Platform",
-      specValue: "iOS & Android",
-      btnText: "Diskusi Desain",
-      btnLink: "#kontak",
-    },
-    {
-      id: 3,
-      tabTitle: "Slide 4: CRM & Automasi",
-      badge: "Customer Pipeline Engine",
-      title: "CRM untuk Manajemen Penjualan Terukur",
-      desc: "Pantau prospek pelanggan, riwayat transaksi, serta otomatisasi pesan follow-up WhatsApp langsung untuk melipatgandakan konversi penjualan bisnis Anda.",
-      bgType: "none" as const,
-      imageSrc: null,
-      imageAlt: "",
-      statLabel: "Automasi",
-      statValue: "Pesan Terintegrasi",
-      specLabel: "Efisiensi",
-      specValue: "Hingga 3x Lipat",
-      btnText: "Setup CRM",
-      btnLink: "#kontak",
-    },
-  ];
 
   // 8 Official Services
   const services: ServiceItem[] = [
@@ -566,179 +497,28 @@ export default function Home() {
                 href="#kontak"
                 className="flex h-12 w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-neutral-300 bg-white px-8 text-sm font-semibold text-neutral-800 transition-all duration-300 hover:border-neutral-400 hover:bg-neutral-50 active:scale-98"
               >
-                Hubungi Kami
+                Halaman Kontak
               </a>
             </div>
           </div>
 
-          {/* =========================================================================
-              HERO SHOWCASE COMPONENT (Refit Interactive Feature Display)
-             ========================================================================= */}
-          <div className="mt-16 sm:mt-20">
-            <div className="relative mx-auto max-w-5xl rounded-3xl border border-neutral-200 bg-white p-3 sm:p-5 shadow-framer">
-              {/* Top Showcase Toolbar */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-b border-neutral-100 pb-4 px-3">
-                <div className="flex items-center gap-2">
-                  <div className="h-3 w-3 rounded-full bg-rose-400" />
-                  <div className="h-3 w-3 rounded-full bg-amber-400" />
-                  <div className="h-3 w-3 rounded-full bg-emerald-400" />
-                  <span className="ml-2 text-xs font-mono text-neutral-400">koneksaindonesia.com/ecosystem</span>
-                </div>
-
-                {/* Interactive Feature Tabs */}
-                <div className="flex flex-wrap items-center gap-1.5">
-                  {heroSlides.map((slide, idx) => (
-                    <button
-                      key={slide.id}
-                      onClick={() => setActiveHeroTab(idx)}
-                      className={`rounded-full px-3.5 py-1 text-xs font-semibold transition-all ${
-                        activeHeroTab === idx
-                          ? "bg-neutral-950 text-white shadow-xs"
-                          : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
-                      }`}
-                    >
-                      {slide.tabTitle}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Showcase Interior View (Slideshow with Images Enlarged Nearly Full) */}
-              <div className="relative mt-4 min-h-[460px] sm:min-h-[520px] lg:min-h-[560px] rounded-2xl overflow-hidden bg-neutral-950 flex flex-col justify-end p-5 sm:p-8 lg:p-10 text-white group">
-                {/* Full-bleed Animated Background (Clean ambient backdrop when image is removed) */}
-                <div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
-                  {heroSlides[activeHeroTab].imageSrc ? (
-                    <div className="relative w-full h-full flex items-center justify-center p-2 sm:p-6">
-                      <Image
-                        key={`slide-img-${activeHeroTab}`}
-                        src={heroSlides[activeHeroTab].imageSrc!}
-                        alt={heroSlides[activeHeroTab].imageAlt}
-                        fill
-                        className="object-contain scale-105 sm:scale-115 opacity-85 sm:opacity-95 mix-blend-lighten animate-hands-float transition-all duration-700"
-                        priority
-                      />
-                      {/* Vignette Gradient for readability */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/45 to-transparent" />
-                    </div>
-                  ) : (
-                    <div className="relative w-full h-full bg-gradient-to-br from-neutral-900 via-neutral-950 to-neutral-950">
-                      <div className="absolute inset-0 bg-grid-subtle opacity-30" />
-                      <div className="absolute -top-24 -left-24 h-80 w-80 rounded-full bg-blue-600/15 blur-3xl pointer-events-none" />
-                      <div className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-indigo-600/10 blur-3xl pointer-events-none" />
-                    </div>
-                  )}
-                </div>
-
-                {/* Prev / Next Slide Arrow Controls */}
-                <button
-                  type="button"
-                  onClick={() => setActiveHeroTab((prev) => (prev > 0 ? prev - 1 : heroSlides.length - 1))}
-                  className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-white/20 bg-neutral-950/70 text-white backdrop-blur-md transition-all hover:bg-neutral-900 hover:scale-105 active:scale-95 shadow-xl"
-                  aria-label="Slide Sebelumnya"
-                >
-                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setActiveHeroTab((prev) => (prev < heroSlides.length - 1 ? prev + 1 : 0))}
-                  className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-white/20 bg-neutral-950/70 text-white backdrop-blur-md transition-all hover:bg-neutral-900 hover:scale-105 active:scale-95 shadow-xl"
-                  aria-label="Slide Selanjutnya"
-                >
-                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-
-                {/* Foreground Glass Information Card */}
-                <div className="relative z-10 grid gap-6 md:grid-cols-12 items-end">
-                  <div className="md:col-span-8 rounded-2xl border border-white/10 bg-neutral-950/80 p-5 sm:p-7 backdrop-blur-md shadow-2xl">
-                    <span className="inline-block rounded-full bg-blue-500/20 border border-blue-400/30 px-3.5 py-1 text-xs font-semibold text-blue-300">
-                      {heroSlides[activeHeroTab].badge}
-                    </span>
-                    <h3 className="mt-3 text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-                      {heroSlides[activeHeroTab].title}
-                    </h3>
-                    <p className="mt-2.5 text-xs sm:text-sm text-neutral-300 leading-relaxed max-w-2xl">
-                      {heroSlides[activeHeroTab].desc}
-                    </p>
-
-                    <div className="mt-5 flex flex-wrap items-center gap-3">
-                      <a
-                        href={heroSlides[activeHeroTab].btnLink}
-                        className="rounded-full bg-white px-6 py-2.5 text-xs font-bold text-neutral-950 transition-all hover:bg-neutral-200 active:scale-98 shadow-md"
-                      >
-                        {heroSlides[activeHeroTab].btnText}
-                      </a>
-                      <a
-                        href="#layanan"
-                        className="rounded-full border border-white/20 bg-white/5 px-6 py-2.5 text-xs font-semibold text-white transition-all hover:bg-white/10"
-                      >
-                        Pelajari Detail
-                      </a>
-                    </div>
-                  </div>
-
-                  {/* Architecture & Live Metric Card */}
-                  <div className="md:col-span-4 flex flex-col gap-2">
-                    <div className="rounded-2xl border border-white/10 bg-neutral-950/80 p-4 backdrop-blur-md font-mono text-xs shadow-xl space-y-2.5">
-                      <div className="flex items-center justify-between text-neutral-400">
-                        <span>{heroSlides[activeHeroTab].statLabel}</span>
-                        <span className="text-emerald-400 font-bold flex items-center gap-1.5">
-                          <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                          {heroSlides[activeHeroTab].statValue}
-                        </span>
-                      </div>
-                      <div className="border-t border-white/10 pt-2 flex items-center justify-between text-neutral-400">
-                        <span>{heroSlides[activeHeroTab].specLabel}</span>
-                        <span className="text-white font-semibold">{heroSlides[activeHeroTab].specValue}</span>
-                      </div>
-                      <div className="border-t border-white/10 pt-2 flex items-center justify-between text-neutral-400">
-                        <span>Markas Pusat</span>
-                        <span className="text-white">Surabaya</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Bottom Slide Indicators */}
-              <div className="mt-3 flex items-center justify-center gap-2">
-                {heroSlides.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setActiveHeroTab(idx)}
-                    className={`h-2 transition-all rounded-full ${
-                      activeHeroTab === idx
-                        ? "w-8 bg-neutral-950"
-                        : "w-2 bg-neutral-300 hover:bg-neutral-400"
-                    }`}
-                    aria-label={`Pindah ke Slide ${idx + 1}`}
-                  />
-                ))}
-              </div>
-
-              {/* 4 Bottom Metric Counter Pills (Refit Style) */}
-              <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
-                <div className="rounded-2xl border border-neutral-100 bg-neutral-50/80 p-4 text-center">
-                  <div className="text-2xl sm:text-3xl font-extrabold text-neutral-950 tracking-tight">100%</div>
-                  <div className="text-xs text-neutral-500 font-medium mt-0.5">Source Code Milik Klien</div>
-                </div>
-                <div className="rounded-2xl border border-neutral-100 bg-neutral-50/80 p-4 text-center">
-                  <div className="text-2xl sm:text-3xl font-extrabold text-neutral-950 tracking-tight">Surabaya</div>
-                  <div className="text-xs text-neutral-500 font-medium mt-0.5">Basis Markas Operasional</div>
-                </div>
-                <div className="rounded-2xl border border-neutral-100 bg-neutral-50/80 p-4 text-center">
-                  <div className="text-2xl sm:text-3xl font-extrabold text-neutral-950 tracking-tight">3+</div>
-                  <div className="text-xs text-neutral-500 font-medium mt-0.5">Institusi & Klien Teruji</div>
-                </div>
-                <div className="rounded-2xl border border-neutral-100 bg-neutral-50/80 p-4 text-center">
-                  <div className="text-2xl sm:text-3xl font-extrabold text-neutral-950 tracking-tight">End-to-End</div>
-                  <div className="text-xs text-neutral-500 font-medium mt-0.5">Desain sampai Maintenance</div>
-                </div>
-              </div>
+          {/* 4 Bottom Metric Counter Pills (Refit Style) */}
+          <div className="mt-16 sm:mt-20 max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+            <div className="rounded-2xl border border-neutral-200/90 bg-white/90 backdrop-blur-md p-5 text-center shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-framer">
+              <div className="text-2xl sm:text-3xl font-extrabold text-neutral-950 tracking-tight">100%</div>
+              <div className="text-xs text-neutral-500 font-medium mt-1">Source Code Milik Klien</div>
+            </div>
+            <div className="rounded-2xl border border-neutral-200/90 bg-white/90 backdrop-blur-md p-5 text-center shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-framer">
+              <div className="text-2xl sm:text-3xl font-extrabold text-neutral-950 tracking-tight">Surabaya</div>
+              <div className="text-xs text-neutral-500 font-medium mt-1">Basis Markas Operasional</div>
+            </div>
+            <div className="rounded-2xl border border-neutral-200/90 bg-white/90 backdrop-blur-md p-5 text-center shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-framer">
+              <div className="text-2xl sm:text-3xl font-extrabold text-neutral-950 tracking-tight">3+</div>
+              <div className="text-xs text-neutral-500 font-medium mt-1">Institusi & Klien Teruji</div>
+            </div>
+            <div className="rounded-2xl border border-neutral-200/90 bg-white/90 backdrop-blur-md p-5 text-center shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-framer">
+              <div className="text-2xl sm:text-3xl font-extrabold text-neutral-950 tracking-tight">End-to-End</div>
+              <div className="text-xs text-neutral-500 font-medium mt-1">Desain sampai Maintenance</div>
             </div>
           </div>
         </div>
@@ -1305,7 +1085,7 @@ export default function Home() {
             {/* Left Contact Information */}
             <div className="lg:col-span-5">
               <span className="text-xs font-bold tracking-widest text-blue-700 uppercase">
-                Kontak & Lokasi
+                Halaman Kontak & Lokasi
               </span>
               <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-neutral-950 sm:text-4xl">
                 Mari Diskusikan Ide Proyek Anda
