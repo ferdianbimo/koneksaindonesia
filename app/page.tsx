@@ -101,13 +101,13 @@ export default function Home() {
     },
     {
       id: 1,
-      tabTitle: "Slide 2: Arsitektur Web (Prism)",
+      tabTitle: "Slide 2: Arsitektur Web",
       badge: "High-Performance Modern Web",
       title: "Website Responsif & Berkecepatan Tinggi",
       desc: "Dibangun dengan fondasi teknologi Next.js, React, dan TypeScript berstandar internasional untuk performa ultra-cepat, indeks SEO maksimal, dan keamanan teruji.",
-      bgType: "prism" as const,
-      imageSrc: "/concrete-prism.png",
-      imageAlt: "Koneksa Concrete Prism Architecture",
+      bgType: "none" as const,
+      imageSrc: null,
+      imageAlt: "",
       statLabel: "Performa Web",
       statValue: "Score 100/100",
       specLabel: "Teknologi",
@@ -137,9 +137,9 @@ export default function Home() {
       badge: "Customer Pipeline Engine",
       title: "CRM untuk Manajemen Penjualan Terukur",
       desc: "Pantau prospek pelanggan, riwayat transaksi, serta otomatisasi pesan follow-up WhatsApp langsung untuk melipatgandakan konversi penjualan bisnis Anda.",
-      bgType: "prism" as const,
-      imageSrc: "/concrete-prism.png",
-      imageAlt: "CRM Engine Concrete Prism",
+      bgType: "none" as const,
+      imageSrc: null,
+      imageAlt: "",
       statLabel: "Automasi",
       statValue: "Pesan Terintegrasi",
       specLabel: "Efisiensi",
@@ -523,16 +523,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Subtle Ambient Accent: Iridescent Concrete Prism Block - Enlarge Corner */}
-        <div className="absolute -top-16 -right-20 sm:-right-8 w-80 sm:w-[460px] lg:w-[540px] aspect-square pointer-events-none select-none opacity-25 sm:opacity-35 rounded-3xl overflow-hidden blur-[1px] animate-prism-shift hidden md:block">
-          <Image
-            src="/concrete-prism.png"
-            alt="Refit Geometric Prism Accent"
-            fill
-            className="object-cover mix-blend-multiply scale-110"
-          />
-        </div>
-
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* Header Tag Capsule (Without green dot) */}
           <div className="flex justify-center">
@@ -615,13 +605,13 @@ export default function Home() {
 
               {/* Showcase Interior View (Slideshow with Images Enlarged Nearly Full) */}
               <div className="relative mt-4 min-h-[460px] sm:min-h-[520px] lg:min-h-[560px] rounded-2xl overflow-hidden bg-neutral-950 flex flex-col justify-end p-5 sm:p-8 lg:p-10 text-white group">
-                {/* Full-bleed Animated Background Image for Current Slide */}
+                {/* Full-bleed Animated Background (Clean ambient backdrop when image is removed) */}
                 <div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
-                  {heroSlides[activeHeroTab].bgType === "hands" ? (
+                  {heroSlides[activeHeroTab].imageSrc ? (
                     <div className="relative w-full h-full flex items-center justify-center p-2 sm:p-6">
                       <Image
-                        key={`hands-${activeHeroTab}`}
-                        src={heroSlides[activeHeroTab].imageSrc}
+                        key={`slide-img-${activeHeroTab}`}
+                        src={heroSlides[activeHeroTab].imageSrc!}
                         alt={heroSlides[activeHeroTab].imageAlt}
                         fill
                         className="object-contain scale-105 sm:scale-115 opacity-85 sm:opacity-95 mix-blend-lighten animate-hands-float transition-all duration-700"
@@ -631,18 +621,10 @@ export default function Home() {
                       <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/45 to-transparent" />
                     </div>
                   ) : (
-                    <div className="relative w-full h-full">
-                      <Image
-                        key={`prism-${activeHeroTab}`}
-                        src={heroSlides[activeHeroTab].imageSrc}
-                        alt={heroSlides[activeHeroTab].imageAlt}
-                        fill
-                        className="object-cover scale-105 sm:scale-110 opacity-85 sm:opacity-95 animate-prism-shift transition-all duration-700"
-                        priority
-                      />
-                      {/* Prismatic Gradient Overlays */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/60 to-neutral-950/20" />
-                      <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/80 via-neutral-950/40 to-transparent" />
+                    <div className="relative w-full h-full bg-gradient-to-br from-neutral-900 via-neutral-950 to-neutral-950">
+                      <div className="absolute inset-0 bg-grid-subtle opacity-30" />
+                      <div className="absolute -top-24 -left-24 h-80 w-80 rounded-full bg-blue-600/15 blur-3xl pointer-events-none" />
+                      <div className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-indigo-600/10 blur-3xl pointer-events-none" />
                     </div>
                   )}
                 </div>
@@ -906,17 +888,6 @@ export default function Home() {
             {/* Visi Card */}
             <div className="lg:col-span-5 rounded-3xl border border-neutral-200 bg-neutral-950 p-8 sm:p-10 text-white flex flex-col justify-between shadow-framer relative overflow-hidden">
               <div className="absolute top-0 right-0 h-48 w-48 rounded-full bg-blue-600/20 blur-2xl" />
-
-              {/* Animated Prismatic Texture Backdrop */}
-              <div className="absolute inset-0 pointer-events-none select-none opacity-20 mix-blend-screen overflow-hidden">
-                <Image
-                  src="/concrete-prism.png"
-                  alt="Visi Foundation Prism"
-                  fill
-                  className="object-cover scale-110 animate-prism-shift"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/70 to-neutral-950/40" />
-              </div>
 
               <div className="relative z-10 flex flex-col justify-between h-full">
                 <div>
@@ -1326,16 +1297,6 @@ export default function Home() {
             alt="Koneksa Mitra Terpercaya"
             fill
             className="object-contain"
-          />
-        </div>
-
-        {/* Subtle Prismatic Corner Accent */}
-        <div className="absolute -top-16 -left-16 w-64 h-64 rounded-3xl overflow-hidden pointer-events-none select-none opacity-15 mix-blend-multiply blur-xs animate-prism-shift hidden md:block">
-          <Image
-            src="/concrete-prism.png"
-            alt="Prism Texture"
-            fill
-            className="object-cover"
           />
         </div>
 
